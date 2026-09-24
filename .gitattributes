@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+# Godot scene/resource files should remain text for cleaner diffs and merges
+*.tscn text eol=lf
+*.tres text eol=lf
+
+# C# source diffing
+*.cs diff=csharp
