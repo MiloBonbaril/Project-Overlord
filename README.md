@@ -26,7 +26,7 @@ outils/        Vérificateurs, tests et prototype de partie
 ## Pré-requis
 
 - Python 3.10 ou plus récent
-- aucune dépendance externe pour la validation ou le vertical slice
+- Godot 4.x pour l’interface (aucune dépendance externe pour la validation ou le vertical slice Python)
 
 ## Valider le dépôt
 
@@ -38,14 +38,41 @@ python3 outils/teste-suite.py
 
 Cette commande valide les réglages, les 8 figures et le catalogue canonique. Elle retourne un code non nul dès qu'un contrat de données ou un cas de non-régression casse ; c'est la commande à utiliser en CI.
 
-## Jouer le vertical slice
+## Jouer
+
+Interface Godot, depuis la racine du dépôt :
+
+```sh
+godot4 --editor project.godot
+# ou directement
+godot4 --path .
+```
+
+Saisissez une seed puis utilisez **Lancer**. Chaque tour affiche le conseil et
+les ordres, accepte les clauses séparées par des virgules, puis présente la
+résolution, les faits autorisés et le rapport. **Rejouer la même seed** remet la
+partie à zéro ; avec les mêmes ordres et clauses, son journal est identique.
+
+La scène exécute `outils/joue-partie.py`, unique source des règles, et lit le
+catalogue dans `contenu/`. Les données restent dans le dépôt. Limites connues :
+Python doit accompagner le projet (pas encore d’export desktop autonome), la
+composition du vivier et l’index de monde ne sont pas exposés dans l’interface,
+et l’habillage est provisoire.
+
+Validation ciblée du pont :
+
+```sh
+python3 outils/tests-integration-godot.py
+```
+
+Le vertical slice en terminal reste disponible :
 
 ```sh
 python3 outils/joue-partie.py --seed 20260926
 python3 outils/joue-partie.py --seed 20260926 --clause terreur --json > journal.json
 ```
 
-La même seed produit le même journal. Godot n'est pas nécessaire pour cette tranche.
+La même seed et les mêmes entrées produisent le même journal.
 
 ## État du projet
 
