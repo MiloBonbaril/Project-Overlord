@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "aldemar",
+  "nom": "Aldemar",
+  "genre": "masculin",
+  "titre": "intendant du donjon",
+  "registre": "froid_administratif",
+
+  "aptitude": {
+    "majeure": "gestion",
+    "mineure": "intrigue"
+  },
+
+  "enveloppes": {
+    "zele": [85, 100],
+    "cruaute": [20, 85],
+    "initiative": [0, 15],
+    "discretion": [0, 100],
+    "franchise": [40, 80]
+  },
+
+  "superieur_par_defaut": null,
+
+  "presentation": "Il applique vos instructions à la lettre, puis il les applique encore, parce qu'il n'a pas reçu l'ordre de s'arrêter. Il n'improvisera jamais rien ; c'est précisément pour cela qu'il faut relire ce qu'on lui écrit."
+}

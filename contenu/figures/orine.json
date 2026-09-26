@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "orine",
+  "nom": "Orine",
+  "genre": "feminin",
+  "titre": "sergente de la garde basse",
+  "registre": "familier",
+
+  "aptitude": {
+    "majeure": "combat",
+    "mineure": "gestion"
+  },
+
+  "enveloppes": {
+    "zele": [0, 100],
+    "cruaute": [0, 100],
+    "initiative": [10, 75],
+    "discretion": [20, 60],
+    "franchise": [20, 85]
+  },
+
+  "superieur_par_defaut": "yldra",
+
+  "presentation": "Elle a servi la maison avant vous et elle vous parle comme à un supérieur, pas comme à un dieu. Vous connaissez son nom, sa voix et son visage, et strictement rien d'autre : c'est la seule figure livrée dont aucune disposition n'est annoncée."
+}

@@ -1,0 +1,198 @@
+{
+  "format": 1,
+
+  "echelles": {
+    "niveau": {
+      "valeurs": ["nul", "faible", "moyen", "fort", "total"],
+      "ordonnee": true,
+      "cyclique": false
+    },
+    "population": {
+      "valeurs": ["hameau", "bourg", "ville", "cite"],
+      "ordonnee": true,
+      "cyclique": false
+    },
+    "hostilite": {
+      "valeurs": ["alliee", "cordiale", "neutre", "tiede", "froide", "declaree"],
+      "ordonnee": true,
+      "cyclique": false
+    },
+    "distance": {
+      "valeurs": ["voisine", "proche", "lointaine", "extreme"],
+      "ordonnee": true,
+      "cyclique": false
+    },
+    "saison": {
+      "valeurs": ["printemps", "ete", "automne", "hiver"],
+      "ordonnee": true,
+      "cyclique": true
+    },
+    "phase": {
+      "valeurs": ["nuit", "matin", "apres-midi", "soiree"],
+      "ordonnee": true,
+      "cyclique": true
+    }
+  },
+
+  "projections": {
+    "niveau": {
+      "grandeur_interne": "points",
+      "intervalle": [0, 100],
+      "bornes": [20, 40, 60, 80]
+    },
+    "population": {
+      "grandeur_interne": "habitants",
+      "intervalle": [0, 200000],
+      "bornes": [400, 4000, 20000]
+    },
+    "hostilite": {
+      "grandeur_interne": "points",
+      "intervalle": [0, 100],
+      "bornes": [15, 35, 55, 75, 90]
+    },
+    "distance": {
+      "grandeur_interne": "ticks",
+      "intervalle": [0, 400],
+      "bornes": [4, 12, 32]
+    }
+  },
+
+  "enums": {
+    "regime": ["monarchie", "theocratie", "oligarchie", "cite-libre", "confederation", "empire"],
+    "succession": ["assuree", "contestee", "vacante"],
+    "charge": ["intendance", "garnison", "clerge", "negoce", "justice", "conseil"],
+    "nature_faction": ["nation", "culte", "ordre-religieux", "institution", "guilde", "tribu"]
+  },
+
+  "types": {
+    "localite": {
+      "liable": true,
+      "champs": {
+        "nation": "ref:nation",
+        "population": "echelle:population",
+        "fortifiee": "bool",
+        "frontaliere": "bool",
+        "dans_le_domaine": "bool",
+        "anomalie_observable": "bool",
+        "distance_donjon": "echelle:distance",
+        "loyaute_envers_nation": "echelle:niveau",
+        "opinion_envers_joueur": "echelle:niveau",
+        "culte_du_joueur": "echelle:niveau",
+        "richesse": "echelle:niveau",
+        "securite": "echelle:niveau",
+        "ferveur": "echelle:niveau"
+      },
+      "lecture_seule": ["distance_donjon"]
+    },
+
+    "nation": {
+      "liable": true,
+      "champs": {
+        "regime": "enum:regime",
+        "religion": "ref:faction",
+        "succession": "enum:succession",
+        "en_guerre": "bool",
+        "puissance": "echelle:niveau",
+        "opinion_envers_joueur": "echelle:niveau",
+        "richesse": "echelle:niveau",
+        "securite": "echelle:niveau",
+        "ferveur": "echelle:niveau"
+      },
+      "lecture_seule": []
+    },
+
+    "notable": {
+      "liable": true,
+      "champs": {
+        "localite": "ref:localite",
+        "nation": "ref:nation",
+        "charge": "enum:charge",
+        "endette": "bool",
+        "ambitieux": "bool",
+        "influence": "echelle:niveau",
+        "opinion_envers_joueur": "echelle:niveau",
+        "richesse": "echelle:niveau",
+        "ferveur": "echelle:niveau"
+      },
+      "lecture_seule": []
+    },
+
+    "faction": {
+      "liable": true,
+      "champs": {
+        "nature": "enum:nature_faction",
+        "puissance": "echelle:niveau",
+        "opinion_envers_joueur": "echelle:niveau",
+        "indices_sur_joueur": "echelle:niveau",
+        "ferveur": "echelle:niveau"
+      },
+      "lecture_seule": []
+    },
+
+    "serviteur": {
+      "liable": true,
+      "champs": {
+        "position": "ref:localite",
+        "combat": "echelle:niveau",
+        "intrigue": "echelle:niveau",
+        "gestion": "echelle:niveau",
+        "magie": "echelle:niveau",
+        "foi": "echelle:niveau",
+        "fatigue": "echelle:niveau"
+      },
+      "lecture_seule": ["combat", "intrigue", "gestion", "magie", "foi", "fatigue"]
+    },
+
+    "joueur": {
+      "liable": false,
+      "champs": {
+        "richesse": "echelle:niveau",
+        "mana": "echelle:niveau",
+        "exposition": "echelle:niveau",
+        "secret_du_donjon": "bool"
+      },
+      "lecture_seule": ["exposition"]
+    }
+  },
+
+  "roles_implicites": ["joueur"],
+
+  "relations": {
+    "opinion_envers": {
+      "de": ["localite", "nation", "notable", "faction"],
+      "envers": ["localite", "nation", "notable", "faction"],
+      "echelle": "niveau",
+      "lecture_seule": false
+    },
+    "hostilite_envers": {
+      "de": ["nation"],
+      "envers": ["nation"],
+      "echelle": "hostilite",
+      "lecture_seule": true
+    }
+  },
+
+  "fonctions": {
+    "voisines": { "args": ["nation", "nation"], "retour": "bool" },
+    "hostilite": { "args": ["nation", "nation"], "retour": "echelle:hostilite", "lit": "hostilite_envers" },
+    "distance": { "args": ["localite", "localite"], "retour": "echelle:distance" },
+    "saison": { "args": [], "retour": "echelle:saison" },
+    "phase": { "args": [], "retour": "echelle:phase" }
+  },
+
+  "refus": {
+    "serviteur.zele": "Les cinq traits ne sont jamais nommables par une donnée de contenu. Une situation conditionnée sur un trait révélerait sa valeur au joueur, et compterait la personnalité deux fois : elle décide de l'option choisie, pas de la scène rencontrée.",
+    "serviteur.cruaute": "Voir serviteur.zele.",
+    "serviteur.initiative": "Voir serviteur.zele.",
+    "serviteur.discretion": "Voir serviteur.zele.",
+    "serviteur.franchise": "Voir serviteur.zele. La franchise agit au rapport, jamais au déclenchement.",
+    "localite.habitants": "La population est ordinale dans le catalogue. Écrivez lieu.population <= \"bourg\" : le seuil en habitants vit dans projections et ne concerne pas l'auteur.",
+    "localite.anomalie": "Écrivez anomalie_observable. Une anomalie non observable est exactement ce qu'une donnée de contenu n'a pas le droit de nommer.",
+    "localite.pair": "Le contenu ne nomme jamais un pair caché, ni sa présence, ni son absence. Règle de non-fuite.",
+    "joueur.pairs": "Voir localite.pair. Aucune donnée de contenu ne lit le nombre de pairs avant la chronique.",
+    "joueur.archetype": "L'archétype de monde est l'information cachée de la partie. Aucune situation ne s'y conditionne.",
+    "monde": "La cible d'effet globale s'appelle joueur : elle désigne vos coffres et votre mana, pas le continent.",
+    "*.nom": "Un rôle se lie par ses champs, jamais par son nom. Les noms propres n'existent qu'à l'interpolation.",
+    "*.id": "Voir *.nom."
+  }
+}

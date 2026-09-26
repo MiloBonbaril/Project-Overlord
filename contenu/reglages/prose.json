@@ -1,0 +1,110 @@
+{
+  "format": 1,
+
+  "normalisation": {
+    "casse": "minuscule",
+    "accents": "supprimes",
+    "apostrophes": ["'", "’"],
+    "tirets": ["-", "‑"],
+    "correspondance": "la_plus_longue_d_abord"
+  },
+
+  "fenetre_unite": 3,
+
+  "ponctuation_fin_de_phrase": [".", "!", "?", "…", ":", ";", "«", "»", "—", "–", "\n"],
+
+  "quantites_vagues": [
+    "quelques",
+    "plusieurs",
+    "une poignée",
+    "une partie",
+    "une part",
+    "la plupart",
+    "presque tous",
+    "presque toutes",
+    "à peine",
+    "la moitié",
+    "un tiers",
+    "le tiers",
+    "un quart",
+    "le quart",
+    "une dizaine",
+    "des dizaines",
+    "une quinzaine",
+    "une vingtaine",
+    "une trentaine",
+    "une quarantaine",
+    "une cinquantaine",
+    "une soixantaine",
+    "une centaine",
+    "des centaines",
+    "un millier",
+    "des milliers",
+    "bon nombre de",
+    "nombre de",
+    "quantité de",
+    "beaucoup",
+    "peu",
+    "trop",
+    "assez",
+    "le gros",
+    "l'essentiel"
+  ],
+
+  "nombres_en_lettres": {
+    "unites": [
+      "un", "une", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf",
+      "dix", "onze", "douze", "treize", "quatorze", "quinze", "seize"
+    ],
+    "dizaines": [
+      "vingt", "vingts", "trente", "quarante", "cinquante", "soixante",
+      "septante", "huitante", "quatre-vingt", "quatre-vingts", "nonante"
+    ],
+    "multiplicateurs": ["cent", "cents", "mille", "million", "millions", "milliard", "milliards"],
+    "liaisons": ["et"],
+    "articles_ambigus": ["un", "une"]
+  },
+
+  "unites_simulees": {
+    "population": {
+      "grandeur": "localite.population",
+      "message": "La population du lieu est une grandeur du monde et ce texte la contredira.",
+      "mots": [
+        "habitant", "habitants", "âme", "âmes", "feu", "feux", "foyer", "foyers",
+        "bouche", "bouches", "villageois", "villageoise", "villageoises"
+      ]
+    },
+    "duree": {
+      "grandeur": "horloge de simulation, en ticks de six heures",
+      "message": "La durée est comptée par la simulation et ce texte la contredira.",
+      "mots": [
+        "tick", "ticks", "heure", "heures", "jour", "jours", "journée", "journées",
+        "nuit", "nuits", "semaine", "semaines", "mois", "saison", "saisons",
+        "an", "ans", "année", "années", "décennie", "décennies", "siècle", "siècles"
+      ]
+    },
+    "distance": {
+      "grandeur": "poids en ticks d'une arête de voyage",
+      "message": "La distance est le poids d'une arête du graphe de voyage et ce texte la contredira.",
+      "mots": [
+        "lieue", "lieues", "mille", "milles", "toise", "toises",
+        "journée de marche", "journées de marche", "jour de marche", "jours de marche"
+      ]
+    },
+    "monnaie": {
+      "grandeur": "richesse",
+      "message": "La richesse est une grandeur du monde et ce texte la contredira.",
+      "mots": [
+        "pièce", "pièces", "écu", "écus", "couronne", "couronnes",
+        "sou", "sous", "florin", "florins", "denier", "deniers"
+      ]
+    }
+  },
+
+  "homographes": {
+    "mille": {
+      "unite_simulee": "distance",
+      "desambiguisation": "multiplicateur_si_precede_d_un_nombre"
+    }
+  }
+}

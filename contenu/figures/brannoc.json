@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "brannoc",
+  "nom": "Brannoc",
+  "genre": "masculin",
+  "titre": "porte-parole",
+  "registre": "exalte",
+
+  "aptitude": {
+    "majeure": "intrigue",
+    "mineure": "magie"
+  },
+
+  "enveloppes": {
+    "zele": [85, 100],
+    "cruaute": [30, 95],
+    "initiative": [40, 80],
+    "discretion": [0, 100],
+    "franchise": [0, 35]
+  },
+
+  "superieur_par_defaut": "aldemar",
+
+  "presentation": "Il parle de vous à des gens qui ne vous ont jamais vu, et il le fait bien. Ses rapports sont sincères au sens où il croit ce qu'il écrit ; ce n'est pas la même chose que vrai."
+}

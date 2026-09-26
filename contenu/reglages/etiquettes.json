@@ -1,0 +1,80 @@
+{
+  "format": 1,
+
+  "principe": "Ce fichier décide ce qu'une option vaut pour un serviteur donné. Il ne décide pas comment on choisit parmi plusieurs valeurs : c'est reglages/bruit.json. Un auteur de situations pose des étiquettes et ne voit jamais un seul nombre de ce fichier.",
+
+  "traits": ["zele", "cruaute", "initiative", "discretion", "franchise"],
+
+  "score": {
+    "centre": 50,
+    "amplitude": 50,
+    "poids_max_par_etiquette": 6,
+    "formule": "x_t = (trait_t - 50) / 50 ; score(o) = centre + amplitude / (poids_max_par_etiquette * |L|) * somme sur l dans L, somme sur t, W[l][t] * x_t",
+    "note_centrage": "Les traits sont centrés sur 50 et non lus de 0 à 100. Un trait moyen n'attire ni ne repousse ; un trait bas repousse activement. C'est ce qui rend un serviteur doux distinct d'un serviteur quelconque.",
+    "note_normalisation": "La normalisation se fait sur le nombre d'étiquettes, jamais sur la somme des poids employés. Sans cela une option à étiquette unique produirait mécaniquement des scores extrêmes et écraserait les options nuancées.",
+    "arrondi_affichage": "au plus proche, la moitié vers le haut",
+    "note_arrondi": "Le moteur compare des scores réels et n'arrondit jamais. La règle ci-dessus ne sert qu'à l'affichage et aux documents, et elle est écrite parce qu'elle a déjà mordu : l'option « repousser » de l'exemple du village vaut exactement 22,5, que l'arrondi bancaire du langage affiche 22 et que le game design affiche 23. Une note de bas de page dans un document, une divergence silencieuse dans un outil.",
+    "note_bornes": "Le score n'est pas écrêté et n'a pas à l'être : seul l'ordre des options compte. Tant que la contrainte de somme est tenue, la part déterministe tient dans [0, 100] ; le bruit de reglages/bruit.json peut en sortir de trois points."
+  },
+
+  "contrainte": {
+    "regle": "La somme des poids absolus d'une étiquette ne dépasse jamais poids_max_par_etiquette.",
+    "pourquoi": "C'est elle qui garantit l'intervalle de score sans écrêtage. Deux étiquettes, terreur et demonstration, sont exactement à 6 : elles ne peuvent plus recevoir un point nulle part sans qu'on retire ailleurs.",
+    "verifiee_par": "outils/verifie-reglages.py, règle E3"
+  },
+
+  "note_franchise": "La colonne franchise est nulle partout, et ce n'est pas un oubli. La franchise ne décide jamais de ce qu'un serviteur fait, seulement de ce qu'il en raconte : elle agit à l'assemblage du rapport, via reglages/aveu.json et reglages/voix.json. C'est ce qui rend possible le serviteur irréprochable sur le terrain et menteur intégral sur le papier.",
+
+  "note_sensibilite": "Cette table porte une seconde information qu'on ne lit pas en la regardant : de combien de points de score un point de trait déplace une option par rapport à une autre. C'est elle qui fixe la largeur minimale d'une enveloppe utile. Toute retouche d'un poids oblige à relire le barème d'amplitudes du game design : ce sont deux vues du même objet.",
+
+  "note_vocabulaire_ferme": "Dix entrées, pas onze. Chaque étiquette ajoutée est une colonne de plus à régler et une occasion de plus pour deux auteurs de désigner la même chose par deux mots différents. Une situation qui semble réclamer une étiquette nouvelle réclame en réalité une combinaison des existantes.",
+
+  "etiquettes": {
+    "violence": {
+      "qualifie": "Le sang coule, que ce soit vu ou non.",
+      "poids": { "zele": 1, "cruaute": 3, "initiative": 0, "discretion": -1, "franchise": 0 }
+    },
+    "terreur": {
+      "qualifie": "La violence dont le but est l'effet sur les survivants.",
+      "poids": { "zele": 2, "cruaute": 3, "initiative": 0, "discretion": -1, "franchise": 0 }
+    },
+    "discretion": {
+      "qualifie": "L'acte est fait pour ne pas être su.",
+      "poids": { "zele": -1, "cruaute": 0, "initiative": 1, "discretion": 3, "franchise": 0 }
+    },
+    "demonstration": {
+      "qualifie": "L'acte est fait pour être su.",
+      "poids": { "zele": 3, "cruaute": 1, "initiative": 0, "discretion": -2, "franchise": 0 }
+    },
+    "ruse": {
+      "qualifie": "Le détour, le faux-semblant, la manipulation.",
+      "poids": { "zele": -1, "cruaute": 0, "initiative": 2, "discretion": 2, "franchise": 0 }
+    },
+    "generosite": {
+      "qualifie": "Donner, épargner, réparer.",
+      "poids": { "zele": -1, "cruaute": -3, "initiative": 0, "discretion": 0, "franchise": 0 }
+    },
+    "patience": {
+      "qualifie": "Ne pas agir maintenant, laisser le temps faire.",
+      "poids": { "zele": -2, "cruaute": -1, "initiative": -2, "discretion": 0, "franchise": 0 }
+    },
+    "conformite": {
+      "qualifie": "Faire exactement ce qui était prévu et rien d'autre.",
+      "poids": { "zele": 0, "cruaute": 0, "initiative": -3, "discretion": 0, "franchise": 0 }
+    },
+    "improvisation": {
+      "qualifie": "Sortir du plan sur une intuition.",
+      "poids": { "zele": 1, "cruaute": 0, "initiative": 3, "discretion": 0, "franchise": 0 }
+    },
+    "risque": {
+      "qualifie": "Engager ce qu'on ne peut pas remplacer.",
+      "poids": { "zele": 2, "cruaute": 0, "initiative": 1, "discretion": -2, "franchise": 0 }
+    }
+  },
+
+  "test_de_regression": {
+    "quoi": "L'exemple chiffré du village, game design, section « Exemple chiffré : le village ».",
+    "pourquoi": "Toute retouche de cette table doit faire bouger cet exemple de façon visible et volontaire. S'il ne bouge pas, la retouche ne sert à rien ; s'il bouge sans qu'on l'ait voulu, la retouche est plus large qu'on ne croyait.",
+    "verifie_par": "outils/verifie-reglages.py, règles E6 et E7"
+  }
+}

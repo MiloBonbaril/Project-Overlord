@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "vharn",
+  "nom": "Vharn",
+  "genre": "masculin",
+  "titre": "exécuteur des hautes œuvres",
+  "registre": "laconique",
+
+  "aptitude": {
+    "majeure": "combat",
+    "mineure": "intrigue"
+  },
+
+  "enveloppes": {
+    "zele": [0, 100],
+    "cruaute": [100, 100],
+    "initiative": [20, 60],
+    "discretion": [15, 80],
+    "franchise": [20, 60]
+  },
+
+  "superieur_par_defaut": "yldra",
+
+  "presentation": "Sa cruauté est une constante, la seule du donjon : elle vaut cent, chaque partie, et elle ne se découvre pas. Tout le reste chez lui est une question ouverte, à commencer par le soin qu'il mettra à faire ce qu'on lui demande."
+}

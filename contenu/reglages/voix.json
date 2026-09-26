@@ -1,0 +1,185 @@
+{
+  "format": 1,
+
+  "principe": "Un registre habille le rapport, il n'écrit jamais un fait. Les faits viennent du catalogue et sont écrits une seule fois, en français neutre. Le registre fournit l'en-tête, les liaisons, la clôture, l'ordre de présentation et la couture d'omission. Le coût d'écriture d'un registre est donc payé une fois, et n'augmente jamais avec la taille du catalogue.",
+
+  "registres": {
+    "froid_administratif": {
+      "nom": "froid administratif",
+      "entete": [
+        "Rapport de mission. Objet : {objectif}.",
+        "Compte rendu, {lieu}, {date}.",
+        "Au sujet de {objectif}, état à ce jour."
+      ],
+      "liaison": [
+        "Ensuite,",
+        "Par ailleurs,",
+        "En conséquence,"
+      ],
+      "cloture": [
+        "Fin du rapport.",
+        "Rien à signaler au-delà.",
+        "Le dossier reste ouvert."
+      ],
+      "ordre_des_faits": "chronologique",
+      "faits_par_phrase": 1,
+      "omission": {
+        "mode": "lisse",
+        "formules": [],
+        "surcharge_aveu": 0
+      }
+    },
+
+    "exalte": {
+      "nom": "exalté",
+      "entete": [
+        "Votre volonté a été portée jusqu'à {lieu}.",
+        "Il a été fait selon votre nom.",
+        "{lieu} connaît désormais ce qu'elle devait connaître."
+      ],
+      "liaison": [
+        "Et alors,",
+        "Car il le fallait,",
+        "Ainsi,"
+      ],
+      "cloture": [
+        "Votre gloire n'a pas diminué.",
+        "J'attends de servir encore.",
+        "Que votre nom pèse sur eux."
+      ],
+      "ordre_des_faits": "par_gravite_decroissante",
+      "faits_par_phrase": 1,
+      "omission": {
+        "mode": "marquee",
+        "formules": [
+          "Le reste n'était pas digne de vous être rapporté.",
+          "Il y eut d'autres choses, sans importance devant vous.",
+          "J'ai réglé ce qui devait l'être, et cela ne mérite pas votre attention."
+        ],
+        "surcharge_aveu": 10
+      }
+    },
+
+    "laconique": {
+      "nom": "laconique",
+      "entete": [
+        "{lieu}.",
+        "Fait.",
+        "{objectif} : état."
+      ],
+      "liaison": [
+        "",
+        "Puis",
+        "Aussi"
+      ],
+      "cloture": [
+        "Voilà.",
+        "C'est tout.",
+        "Je rentre."
+      ],
+      "ordre_des_faits": "chronologique",
+      "faits_par_phrase": 2,
+      "omission": {
+        "mode": "lisse",
+        "formules": [],
+        "surcharge_aveu": 0
+      }
+    },
+
+    "obsequieux": {
+      "nom": "obséquieux",
+      "entete": [
+        "Si l'on m'accorde de parler : {objectif}.",
+        "J'ose à peine occuper votre temps avec {lieu}.",
+        "Votre serviteur rend compte, indignement."
+      ],
+      "liaison": [
+        "Je me permets d'ajouter que",
+        "Il faut aussi dire, à ma honte, que",
+        "Et, si vous le tolérez,"
+      ],
+      "cloture": [
+        "Je me tiens à votre disposition pour toute correction.",
+        "Pardonnez la longueur de ceci.",
+        "Votre jugement corrigera le mien."
+      ],
+      "ordre_des_faits": "par_gravite_croissante",
+      "faits_par_phrase": 1,
+      "omission": {
+        "mode": "marquee",
+        "formules": [
+          "Le reste tient à des détails que je ne voudrais pas vous imposer.",
+          "Il y a eu quelques contretemps, dont je prends l'entière responsabilité, et qui n'ont pas de suite.",
+          "J'ai préféré ne pas encombrer ce rapport de ce qui est déjà réglé."
+        ],
+        "surcharge_aveu": 10
+      }
+    },
+
+    "clinique": {
+      "nom": "clinique",
+      "entete": [
+        "Observations, {lieu}.",
+        "Relevé : {objectif}.",
+        "Protocole appliqué à {lieu}. Résultats ci-dessous."
+      ],
+      "liaison": [
+        "Point suivant :",
+        "Conséquence observée :",
+        "À noter :"
+      ],
+      "cloture": [
+        "Fin du relevé. Les conclusions demandent vérification.",
+        "Je réserve mon interprétation.",
+        "Un second passage serait utile."
+      ],
+      "ordre_des_faits": "par_gravite_decroissante",
+      "faits_par_phrase": 1,
+      "omission": {
+        "mode": "marquee",
+        "formules": [
+          "Certaines observations ne sont pas concluantes et sont écartées de ce relevé.",
+          "Un point reste en attente de vérification et n'est pas reporté ici.",
+          "Données incomplètes sur un épisode. Omis."
+        ],
+        "surcharge_aveu": 10
+      }
+    },
+
+    "familier": {
+      "nom": "familier",
+      "entete": [
+        "Bon. {lieu}.",
+        "Je vous raconte {objectif}, ce sera plus simple.",
+        "Vous n'allez pas aimer, mais voilà."
+      ],
+      "liaison": [
+        "Après ça,",
+        "Et puis,",
+        "Bref,"
+      ],
+      "cloture": [
+        "Voilà où on en est.",
+        "Dites-moi si je me suis trompé.",
+        "On fera autrement la prochaine fois."
+      ],
+      "ordre_des_faits": "chronologique",
+      "faits_par_phrase": 2,
+      "omission": {
+        "mode": "lisse",
+        "formules": [],
+        "surcharge_aveu": 0
+      }
+    }
+  },
+
+  "note_omission": "mode lisse : le rapport ne montre aucune couture, le joueur ne sait pas qu'il manque quelque chose. mode marquee : une formule de comblement prend la place du fait tu, à chaque fois et sans exception. La couture est donc une preuve certaine de dissimulation, jamais un indice bruité : c'est la seule information du jeu dont le joueur peut être sûr sans enquêter.",
+
+  "note_surcharge": "surcharge_aveu est le prix de cette certitude, et il est payé dans la même monnaie. Un registre marqué ajoute 10 points au coût d'aveu de chaque fait : le serviteur qui laisse voir ses coutures est aussi celui qui en fait davantage, parce que l'habitude rhétorique qui pose la formule creuse est celle qui juge un fait indigne d'être dit. Le joueur arbitre donc entre voir qu'on lui cache quelque chose et qu'on lui cache moins. Sans cette ligne, les trois registres marqués sont strictement supérieurs aux trois autres et le champ registre cesse d'être un choix.",
+
+  "note_surcharge_valeur": "10 est la moitié de l'écart entre deux paliers d'aveu. C'est la plus grande surcharge qui ne puisse jamais faire passer un fait pour un fait du palier suivant — à 20, un fait modéré se comporterait exactement comme un fait élevé, ce qui reviendrait à ré-étiqueter le catalogue depuis un fichier de réglage. C'est aussi la plus petite qui déplace une part visible des tirages : elle retourne le sort d'un fait pour toute franchise située dans les dix points au-dessus de son palier.",
+
+  "note_surcharge_enveloppes": "La surcharge déplace les seuils de comportement de reglages/aveu.json pour les figures à registre marqué : 30, 50, 70, 90 au lieu de 20, 40, 60, 80. La règle des deux paliers de l'enveloppe de franchise se vérifie donc contre les seuils effectifs de la figure, et non contre les seuils nus. Voir outils/verifie-figures.py, règle G8.",
+
+  "note_accord": "Les formules sont écrites de façon à ne jamais accorder au genre du serviteur, à une exception près, la clôture « Dites-moi si je me suis trompé » du registre familier, qui est accordée à l'exécution à partir du genre grammatical de la figure. C'est le seul endroit du fichier qui en dépende, et il est signalé ici pour qu'une traduction ne le manque pas."
+}

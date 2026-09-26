@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "yldra",
+  "nom": "Yldra",
+  "genre": "feminin",
+  "titre": "capitaine des armes",
+  "registre": "exalte",
+
+  "aptitude": {
+    "majeure": "combat",
+    "mineure": "intrigue"
+  },
+
+  "enveloppes": {
+    "zele": [85, 100],
+    "cruaute": [55, 95],
+    "initiative": [65, 90],
+    "discretion": [5, 70],
+    "franchise": [0, 100]
+  },
+
+  "superieur_par_defaut": null,
+
+  "presentation": "Elle vous a attendu sans savoir si vous viendriez, et elle ne pardonnera à personne d'en avoir douté. Elle fera toujours plus que ce qui a été demandé ; ce qu'elle jugera nécessaire, et ce qu'elle choisira d'en écrire, restent à voir."
+}

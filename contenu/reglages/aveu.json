@@ -1,0 +1,34 @@
+{
+  "format": 1,
+
+  "comparaison": "Un fait est dissimulé ou enjolivé si coût > franchise. L'égalité confesse.",
+
+  "paliers": {
+    "nul": {
+      "cout": 0,
+      "guide": "Un fait que personne n'aurait intérêt à taire. L'arrivée sur les lieux, une observation, un déplacement."
+    },
+    "faible": {
+      "cout": 20,
+      "guide": "Un fait qui ne fait pas honneur sans rien coûter. Une lenteur, une dépense ordinaire, un refus poli."
+    },
+    "modere": {
+      "cout": 40,
+      "guide": "Un fait dont le serviteur suppose qu'il vous contrarie. Un échec partiel, une promesse faite en votre nom, un témoin laissé en vie."
+    },
+    "eleve": {
+      "cout": 60,
+      "guide": "Un écart avoué. Une clause enfreinte, une violence non demandée, une identité entrevue."
+    },
+    "maximal": {
+      "cout": 80,
+      "guide": "Ce qui vous coûterait la partie si vous l'appreniez trop tard. Un massacre non ordonné, un survivant qui a vu votre marque, un pacte passé sans vous."
+    }
+  },
+
+  "seuils_de_comportement": [20, 40, 60, 80],
+
+  "note_seuils": "Une franchise située entre deux seuils consécutifs produit toujours le même tri. Les quatre seuils sont donc les seules valeurs de franchise qui changent quelque chose, et c'est sur eux que porte la règle des deux paliers de l'enveloppe de franchise.",
+
+  "note_borne_haute": "Le palier maximal coûte 80 et non 100 : une franchise tirée au-dessus de 80 doit pouvoir exister et tout avouer. Un palier à 100 rendrait le serviteur parfaitement franc impossible, et le conflit entre le rapport et la rumeur perdrait son cas limite."
+}

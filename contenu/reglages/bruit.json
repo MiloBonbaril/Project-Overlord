@@ -1,0 +1,68 @@
+{
+  "format": 1,
+
+  "principe": "reglages/etiquettes.json décide ce qu'une option vaut. Ce fichier décide comment on choisit parmi plusieurs valeurs. Les deux se règlent séparément, et c'est le seul découpage qui permette de rendre un serviteur plus imprévisible sans changer son caractère.",
+
+  "note_deux_aleas": "Le jeu tire deux fois, et les deux tirages ne font pas la même chose. Le game design appelait « le bruit » tantôt l'un tantôt l'autre ; les nommer séparément est la première décision de ce fichier, parce qu'un implémenteur qui lit « bruit » à deux endroits en code un seul. Le bruit est borné et ne dépend de rien : c'est la main qui tremble. L'audace n'est pas bornée et dépend de la marge : c'est le serviteur qui prend une liberté parce que l'ordre était vague. Retirer le bruit invalide silencieusement le barème d'amplitudes, dont le premier cran se calcule à partir de son amplitude. Retirer l'audace retire aux clauses leur seul effet sur un serviteur qui n'allait de toute façon pas désobéir.",
+
+  "sequence": [
+    "1. Score déterministe de chaque option, par reglages/etiquettes.json.",
+    "2. Élagage : toute option à plus de `elagage` points sous la meilleure est écartée, définitivement.",
+    "3. Bruit : un tirage indépendant est ajouté au score de chaque option survivante.",
+    "4. Audace : tirage pondéré parmi les survivantes, à la température T(M)."
+  ],
+
+  "note_ordre": "L'élagage se fait avant le bruit, et l'ordre n'est pas indifférent. Élaguer après le bruit rendrait possible, une fois sur mille, l'option que le serviteur n'aurait jamais prise — et cette fois-là serait inexplicable, ce que le garde-fou « toujours explicable après coup » interdit. Élaguer avant fait de « ce qu'il ne fera jamais » une propriété du personnage et non un accident.",
+
+  "bruit": {
+    "loi": "uniforme",
+    "amplitude": 3,
+    "portee": "par option, tirage indépendant",
+    "note": "Un écart de six points au maximum est renversable par le bruit seul. Ce nombre n'est pas libre : la largeur minimale utile d'une enveloppe de traits vaut deux fois cette amplitude divisée par la sensibilité, ce qui fixe le premier cran non nul du barème d'amplitudes à quinze points. Doubler le bruit double ce cran. Les deux se règlent ensemble ou pas du tout."
+  },
+
+  "elagage": {
+    "ecart": 35,
+    "note": "Une option à plus de 35 points sous la meilleure n'est pas tirée, quelle que soit la marge. C'est ce qui rend vraie la phrase que l'exemple du village emploie : le joueur ignore laquelle des deux options son serviteur retiendra, mais il sait avec certitude ce qu'il ne fera pas.",
+    "derivation": "La valeur se déduit de l'exemple chiffré, et elle est la seule ronde à le faire. Elle doit dépasser 31, l'écart qui sépare la meilleure option de Yldra sous clause de sa pire, sans quoi la clause la rendrait déterministe. Elle doit rester sous 39, l'écart qui sépare le massacre du reste chez Corvin, sans quoi Corvin massacrerait parfois. Il reste 35."
+  },
+
+  "audace": {
+    "temperature": {
+      "base": 2,
+      "pente": 14,
+      "formule": "T(M) = base + pente * M",
+      "note": "Marge nulle, T vaut 2 et le tirage est quasi déterministe : le serviteur prend l'option la plus conforme au cadre. Marge pleine, T vaut 16 et le tirage est grand ouvert. La pente est le paramètre nommé dans les garde-fous du game design ; c'est lui qu'on bougera au test."
+    },
+    "ponderation": "exponentielle : poids(o) proportionnel à exp((score(o) - meilleur) / T), sur les options survivantes."
+  },
+
+  "marge": {
+    "formule": "M = (1 - P) * (plancher + poids_zele * Z / 100)",
+    "plancher": 0.5,
+    "poids_zele": 0.5,
+    "note_parametrage": "Les deux nombres somment à 1, donc un ordre parfaitement vague confié à un serviteur de zèle maximal donne exactement M = 1. C'est la même écriture que la formule du game design, reparamétrée pour que les deux valeurs se lisent sur la même échelle : le plancher est ce qu'un serviteur de zèle nul s'autorise, le poids est ce que le zèle y ajoute.",
+    "note_moment": "M se calcule quand la mission rencontre la situation, jamais quand l'ordre est écrit : P dépend de ce que les clauses couvrent réellement de la situation rencontrée, ce qui est inconnaissable d'avance."
+  },
+
+  "cibles": {
+    "note": "Ce ne sont pas des entrées du moteur, ce sont les cibles que le réglage vise. Elles sont ici pour être vérifiables par un outil plutôt que défendues de mémoire en réunion.",
+    "predictibilite": {
+      "valeur": 0.66,
+      "tolerance": 0.06,
+      "mesure": "Part des tirages qui retiennent l'option de meilleur score déterministe, moyennée sur les quatre décisions de l'exemple chiffré du village.",
+      "pourquoi": "Le garde-fou du game design vise environ deux tiers de choix prévisibles pour un joueur qui connaît le serviteur. Au-dessus, le système n'est qu'une table de correspondance ; en dessous, le joueur se sent trahi par un dé."
+    },
+    "renversement_grand_ecart": {
+      "ecart": 25,
+      "maximum": 0.2,
+      "mesure": "Probabilité que l'option de meilleur score soit écartée alors qu'elle devance la suivante de 25 points, à marge maximale.",
+      "pourquoi": "Le bruit seul ne peut jamais renverser un tel écart, et c'est garanti par son amplitude. L'audace le peut, et doit le pouvoir rarement : c'est le « écart positif possible » des garde-fous, le jour où un serviteur surprend son maître. Au-delà d'une fois sur cinq, ce n'est plus une surprise, c'est un serviteur qu'on ne connaît pas."
+    }
+  },
+
+  "test_de_regression": {
+    "quoi": "Les quatre décisions de l'exemple chiffré du village, avec et sans clause.",
+    "verifie_par": "outils/verifie-reglages.py, règles B2 à B6"
+  }
+}

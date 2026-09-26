@@ -11,6 +11,11 @@ export_credentials.cfg
 # Imported translations (automatically generated from CSV files)
 *.translation
 
+# Local agent/editor state and generated Python bytecode
+.claude/
+__pycache__/
+*.py[cod]
+
 # Mono-specific ignores
 .mono/
 data_*/

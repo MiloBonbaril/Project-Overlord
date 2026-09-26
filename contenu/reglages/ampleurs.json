@@ -1,0 +1,78 @@
+{
+  "format": 1,
+
+  "principe": "Un auteur écrit « la loyauté du lieu envers sa nation baisse, ampleur majeure ». Ce fichier est le seul endroit qui dit ce que « majeure » vaut. Rééquilibrer un effet n'oblige donc à toucher aucune situation, et ajouter une situation n'oblige à rééquilibrer rien.",
+
+  "ampleurs": ["infime", "legere", "notable", "grande", "majeure"],
+
+  "application": {
+    "sur_quoi": "L'effet s'applique à la grandeur interne déclarée par reglages/monde.json, section projections, jamais au cran ordinal. Le cran affiché est ensuite reprojeté depuis la valeur interne.",
+    "sens": "hausse ajoute, baisse retranche. En mode facteur, hausse multiplie et baisse divise.",
+    "ecretage": "La valeur interne est bornée à l'intervalle déclaré par la projection. Un effet qui pousse au-delà ne fait rien de plus, et ce n'est pas une erreur : un lieu déjà ruiné ne s'appauvrit plus.",
+    "symetrie": "Une hausse et une baisse de même ampleur valent le même nombre. L'asymétrie — une réputation qui se perd plus vite qu'elle ne se gagne — est un réglage qu'on voudra peut-être, et qu'on n'écrit pas aujourd'hui : aucune donnée ne dit encore de combien. Ajouter un champ que rien ne lit est exactement l'erreur que le registre de voix a coûtée."
+  },
+
+  "defaut": {
+    "unite": "points",
+    "echelle": "niveau",
+    "valeurs": {
+      "infime": 3,
+      "legere": 8,
+      "notable": 15,
+      "grande": 25,
+      "majeure": 40
+    },
+    "derivation": "Les cinq nombres se déduisent de la largeur d'un cran de l'échelle niveau, qui vaut 20 points — bornes 20, 40, 60, 80 sur un intervalle de 100. infime vaut 3, soit exactement l'amplitude du bruit de reglages/bruit.json : c'est le plus petit mouvement que le jeu admette, et il en faut sept pour changer un cran. legere se voit à deux. notable, à 15, traverse un cran ou non selon l'endroit où l'on se trouve : c'est l'ampleur ordinaire, celle dont l'effet se sent sans être garanti. grande, à 25, est la première ampleur qui change toujours le cran affiché. majeure, à 40, en traverse toujours deux : c'est « s'effondre »."
+  },
+
+  "par_grandeur": {
+    "note": "Onze des douze grandeurs inscriptibles partagent le barème par défaut, et c'est délibéré. Ce fichier existe pour que l'équilibrage les sépare, et c'est au test de les séparer : une séparation posée aujourd'hui serait un nombre inventé déguisé en réglage. Les deux exceptions ci-dessous ne sont pas des choix d'équilibrage, ce sont des nécessités — l'une d'unité, l'autre de règle.",
+
+    "population": {
+      "unite": "facteur",
+      "echelle": "population",
+      "valeurs": {
+        "infime": 0.97,
+        "legere": 0.92,
+        "notable": 0.85,
+        "grande": 0.7,
+        "majeure": 0.45
+      },
+      "pourquoi": "La seule grandeur du schéma dont la projection n'est pas l'échelle niveau : elle compte des habitants sur un intervalle de 0 à 200 000, avec des crans séparés par un facteur cinq à dix. Un barème en points y est sans signification — retirer 40 habitants à une cité n'est rien, à un hameau c'est la moitié. Le barème est donc multiplicatif, et il se lit en proportion de ce qui était là.",
+      "ce_que_ca_donne": "Une baisse majeure fait descendre d'un cran une localité qui n'est pas au bas du sien : un bourg de 800 tombe à 360, donc hameau ; une ville de 5 000 tombe à 2 250, donc bourg. Une cité de 100 000 reste une cité. On ne dépeuple pas une capitale en une scène, et c'est le bon résultat."
+    },
+
+    "indices_sur_joueur": {
+      "unite": "points",
+      "echelle": "niveau",
+      "valeurs": {
+        "infime": 2,
+        "legere": 5,
+        "notable": 9,
+        "grande": 14,
+        "majeure": 19
+      },
+      "pourquoi": "Toutes les valeurs restent strictement sous la largeur d'un cran, 20 points. Aucune situation seule ne peut donc faire monter d'un cran ce qu'une faction a déduit du joueur : il en faut toujours au moins deux. C'est la traduction chiffrée de ce que le format dit en prose — l'usage de ce champ est exceptionnel, il sert aux rares déductions sans témoin, et une déduction qui tiendrait à une seule scène court-circuiterait le graphe de rumeurs exactement comme le ferait une hausse d'exposition écrite à la main."
+    }
+  },
+
+  "domaine": {
+    "regle": "Le domaine de ce fichier est exactement l'ensemble des grandeurs inscriptibles de reglages/monde.json : les champs echelle: de chaque type qui ne figurent pas dans sa liste lecture_seule, plus les relations inscriptibles. Ni plus, ni moins.",
+    "pourquoi": "Une entrée en trop est un barème pour une grandeur qu'aucune situation ne peut écrire ; une entrée manquante est une situation légale que le moteur ne sait pas appliquer. Les deux sont silencieuses.",
+    "verifiee_par": "outils/verifie-reglages.py, règle A2",
+    "attendu": [
+      "population",
+      "loyaute_envers_nation",
+      "opinion_envers_joueur",
+      "culte_du_joueur",
+      "richesse",
+      "securite",
+      "ferveur",
+      "puissance",
+      "influence",
+      "indices_sur_joueur",
+      "mana",
+      "opinion_envers"
+    ]
+  }
+}

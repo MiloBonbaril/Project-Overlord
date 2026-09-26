@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "tessia",
+  "nom": "Tessia",
+  "genre": "feminin",
+  "titre": "émissaire",
+  "registre": "obsequieux",
+
+  "aptitude": {
+    "majeure": "intrigue",
+    "mineure": "gestion"
+  },
+
+  "enveloppes": {
+    "zele": [20, 60],
+    "cruaute": [0, 25],
+    "initiative": [10, 75],
+    "discretion": [5, 70],
+    "franchise": [0, 40]
+  },
+
+  "superieur_par_defaut": "corvin",
+
+  "presentation": "Elle rentrera de chaque mission avec un accord, et il aura coûté moins de sang que prévu. Elle ne vous le dira pas ainsi : elle a compris depuis longtemps que la clémence est ce qu'elle a de plus difficile à vous avouer."
+}

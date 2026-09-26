@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "corvin",
+  "nom": "Corvin",
+  "genre": "masculin",
+  "titre": "maître des silences",
+  "registre": "laconique",
+
+  "aptitude": {
+    "majeure": "intrigue",
+    "mineure": "combat"
+  },
+
+  "enveloppes": {
+    "zele": [15, 55],
+    "cruaute": [0, 40],
+    "initiative": [0, 100],
+    "discretion": [85, 100],
+    "franchise": [35, 100]
+  },
+
+  "superieur_par_defaut": null,
+
+  "presentation": "Personne ne le voit arriver et personne ne se souvient de l'avoir vu partir. Il tue peu, par économie plus que par scrupule, et vous dit probablement la vérité — sur ce qu'il consent à rapporter."
+}

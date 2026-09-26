@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "nesque",
+  "nom": "Nesque",
+  "genre": "feminin",
+  "titre": "thaumaturge de la chambre basse",
+  "registre": "clinique",
+
+  "aptitude": {
+    "majeure": "magie",
+    "mineure": "gestion"
+  },
+
+  "enveloppes": {
+    "zele": [25, 90],
+    "cruaute": [0, 100],
+    "initiative": [85, 100],
+    "discretion": [20, 60],
+    "franchise": [10, 50]
+  },
+
+  "superieur_par_defaut": "aldemar",
+
+  "presentation": "Elle comprend vos ordres mieux que vous ne les avez formulés, et c'est la version comprise qu'elle exécute. Sa cruauté n'est pas une disposition, c'est une variable : elle dépendra de ce que la question posée exigeait."
+}
