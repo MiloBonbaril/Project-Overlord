@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "seuils": {
+    "adhesion_max": 8,
+    "reserve_max": 20
+  },
+  "etats": {
+    "adhesion": {"libelle": "Adhésion probable", "reduction": 0},
+    "reserve": {"libelle": "Réserve probable", "reduction": 1},
+    "resistance": {"libelle": "Résistance probable", "reduction": 2}
+  }
+}

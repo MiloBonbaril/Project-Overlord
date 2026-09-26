@@ -32,17 +32,37 @@ def traits_for(figure: dict[str, Any], rng: random.Random) -> dict[str, int]:
     return {trait: rng.randint(*figure["enveloppes"][trait]) for trait in TRAITS}
 
 
-def choose(options: list[dict[str, Any]], figure: dict[str, Any], labels: dict[str, Any], noise: dict[str, Any], rng: random.Random, clauses: set[str]) -> tuple[dict[str, Any], dict[str, float]]:
+def choose(options: list[dict[str, Any]], figure: dict[str, Any], labels: dict[str, Any], noise: dict[str, Any], rng: random.Random, clauses: set[str]) -> tuple[dict[str, Any], dict[str, float], list[dict[str, Any]]]:
     scores = {option["id"]: score(option, figure, labels) for option in options}
-    best = max(scores.values())
-    survivors = [option for option in options if best - scores[option["id"]] <= noise["elagage"]["ecart"] and not (clauses & set(option.get("interdit_par", [])))]
-    if not survivors:
-        survivors = options
+    admissible = [option for option in options if not (clauses & set(option.get("interdit_par", [])))]
+    if not admissible:
+        raise ValueError("aucune option admissible avec les clauses actives")
+    best = max(scores[option["id"]] for option in admissible)
+    survivors = [option for option in admissible if best - scores[option["id"]] <= noise["elagage"]["ecart"]]
     noisy = {option["id"]: scores[option["id"]] + rng.uniform(-noise["bruit"]["amplitude"], noise["bruit"]["amplitude"]) for option in survivors}
-    return max(survivors, key=lambda option: noisy[option["id"]]), scores
+    return max(survivors, key=lambda option: noisy[option["id"]]), scores, admissible
+
+
+def resolution_for_gap(gap: float, resolution: dict[str, Any]) -> tuple[str, str, int]:
+    thresholds = resolution["seuils"]
+    if gap <= thresholds["adhesion_max"]:
+        state = "adhesion"
+    elif gap <= thresholds["reserve_max"]:
+        state = "reserve"
+    else:
+        state = "resistance"
+    setting = resolution["etats"][state]
+    return state, setting["libelle"], setting["reduction"]
+
+
+def reduced_magnitude(magnitude: str, reduction: int, settings: dict[str, Any]) -> str:
+    magnitudes = ["nul", *settings["ampleurs"]]
+    return magnitudes[max(0, magnitudes.index(magnitude) - reduction)]
 
 
 def level_change(current: str, sense: str, magnitude: str, settings: dict[str, Any]) -> str:
+    if magnitude == "nul":
+        return current
     values = settings["defaut"]["valeurs"]
     points = LEVELS.index(current) * 20
     delta = values[magnitude]
@@ -77,6 +97,7 @@ def play(seed: int, turns: int, chosen: list[str] | None = None,
     settings = load(ROOT / "contenu/reglages/ampleurs.json")
     labels = load(ROOT / "contenu/reglages/etiquettes.json")
     noise = load(ROOT / "contenu/reglages/bruit.json")
+    resolution = load(ROOT / "contenu/reglages/resolution-serviteur.json")
     figures = [load(path) for path in sorted((ROOT / "contenu/figures").glob("*.json"))]
     known_figures = {figure["id"] for figure in figures}
     if pool:
@@ -107,7 +128,7 @@ def play(seed: int, turns: int, chosen: list[str] | None = None,
         active_clauses = set(clauses or set())
         if turn_clauses and turn <= len(turn_clauses):
             active_clauses.update(turn_clauses[turn - 1])
-        auto, scores = choose(options, figure, labels, noise, rng, active_clauses)
+        auto, scores, admissible = choose(options, figure, labels, noise, rng, active_clauses)
         if chosen and turn <= len(chosen):
             option = next((item for item in options if item["id"] == chosen[turn - 1]), None)
             if option is None:
@@ -118,18 +139,25 @@ def play(seed: int, turns: int, chosen: list[str] | None = None,
                 raise ValueError(f"choix '{option['id']}' interdit au tour {turn} par : {', '.join(sorted(forbidden_by))}")
         else:
             option = auto
+        score_max = max(scores[item["id"]] for item in admissible)
+        chosen_score = scores[option["id"]]
+        gap = max(0.0, score_max - chosen_score)
+        resolution_state, resolution_label, reduction = resolution_for_gap(gap, resolution)
         before = json.loads(json.dumps(world, ensure_ascii=False))
         facts = []
+        magnitudes = []
         for effect in option["effets"]:
             role, field = effect["cible"].split(".", 1)
             old = world[role].get(field, "moyen")
+            applied_magnitude = reduced_magnitude(effect["ampleur"], reduction, settings)
             if isinstance(old, str) and old in LEVELS:
-                world[role][field] = level_change(old, effect["sens"], effect["ampleur"], settings)
+                world[role][field] = level_change(old, effect["sens"], applied_magnitude, settings)
+            magnitudes.append({"cible": effect["cible"], "avant": effect["ampleur"], "apres": applied_magnitude})
             facts.append(f"{effect['cible']} : {old} → {world[role][field]}")
         text, omitted = report(figure, option, rng)
         common = {"tour": turn, "situation": situation["id"], "serviteur": figure["id"], "conseil": [{"id": o["id"], "score": round(scores[o["id"]], 2)} for o in options], "clauses": sorted(active_clauses), "action": option["id"], "rapport": text}
-        player_entry = {**common, "faits": [] if omitted else facts}
-        tester_entry = {**common, "faits": facts, "fait_omis": omitted, "etat_avant": before, "etat_apres": json.loads(json.dumps(world, ensure_ascii=False))}
+        player_entry = {**common, "resolution_probable": resolution_label, "faits": [] if omitted else facts}
+        tester_entry = {**common, "resolution_probable": resolution_label, "faits": facts, "fait_omis": omitted, "score_max": score_max, "score_choisi": chosen_score, "ecart": gap, "etat_resolution": resolution_state, "ampleurs": magnitudes, "etat_avant": before, "etat_apres": json.loads(json.dumps(world, ensure_ascii=False))}
         log.append((player_entry, tester_entry))
     return {"seed": seed, "tours": len(log), "figures_du_vivier": sorted(figure["id"] for figure in figures), "journal": [item[0] for item in log], "journal_testeur": [item[1] for item in log], "etat_final": world}
 
@@ -182,7 +210,7 @@ def main() -> int:
             print("  " + ", ".join(f"{c['id']} ({c['score']})" for c in item["conseil"]))
             facts = "; ".join(item["faits"]) if item["faits"] else "non établis dans le rapport"
             print(f"  Clause(s) : {', '.join(item['clauses']) or 'aucune'}")
-            print(f"  Action : {item['action']}\n  {item['rapport']}\n  Faits : {facts}")
+            print(f"  Action : {item['action']} — {item['resolution_probable']}\n  {item['rapport']}\n  Faits : {facts}")
         print("\nPartie terminée.")
     return 0
 
