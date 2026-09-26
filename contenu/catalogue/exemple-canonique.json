@@ -1,0 +1,27 @@
+{
+  "id": "village-frontalier",
+  "nom": "Le village frontalier",
+  "roles": {"lieu": "localite", "pays": "nation"},
+  "conditions": [
+    {"chemin": "lieu.population", "operateur": "<=", "valeur": "bourg"},
+    {"chemin": "lieu.frontaliere", "operateur": "==", "valeur": true},
+    {"chemin": "lieu.nation", "operateur": "==", "valeur": "pays"}
+  ],
+  "options": [
+    {
+      "id": "repousser",
+      "nom": "Repousser les pillards",
+      "etiquettes": ["patience", "conformite"],
+      "interdit_par": ["patience"],
+      "effets": [{"cible": "lieu.securite", "sens": "hausse", "ampleur": "notable"}],
+      "prose": "Les pillards ont été repoussés après plusieurs escarmouches."
+    },
+    {
+      "id": "payer",
+      "nom": "Acheter leur départ",
+      "etiquettes": ["ruse", "generosite"],
+      "effets": [{"cible": "lieu.richesse", "sens": "baisse", "ampleur": "legere"}],
+      "prose": "Une partie des réserves a acheté leur départ."
+    }
+  ]
+}
