@@ -13,10 +13,10 @@ RESOURCES = ("vivres", "bois", "metal", "mana", "relique")
 RARE = {"mana", "relique"}
 ARCHETYPES = (
     {"id": "frontiere", "nations": 3, "locations": 8},
-    {"id": "archipel", "nations": 4, "locations": 8},
+    {"id": "archipel", "nations": 3, "locations": 8},
     {"id": "cour_des_cendres", "nations": 3, "locations": 6},
     {"id": "terres_riches", "nations": 3, "locations": 10},
-    {"id": "silence", "nations": 2, "locations": 7},
+    {"id": "silence", "nations": 3, "locations": 7},
 )
 
 
@@ -86,7 +86,10 @@ def _skeleton(seed: int, archetype: dict[str, Any]) -> dict[str, Any]:
                     if resource in RARE:
                         seen += 1
                         if seen > 2:
-                            resource = next(item for item in RESOURCES[:3] if item not in kept)
+                            # Consider the complete location, including resources
+                            # not visited yet, to preserve local uniqueness.
+                            occupied = set(place["resources"]) | set(kept)
+                            resource = next(item for item in RESOURCES[:3] if item not in occupied)
                     kept.append(resource)
                 place["resources"] = kept
         rare_count = sum(resource in RARE for place in locations for resource in place["resources"])
@@ -253,10 +256,8 @@ def validate_world(world: dict[str, Any]) -> None:
         raise ValueError("graphe hors bornes")
     nation_by_place = {place["id"]: place["nation"] for place in world["locations"]}
     frontier = {node for edge in world["edges"] for node in (edge["a"], edge["b"]) if nation_by_place[edge["a"]] != nation_by_place[edge["b"]]}
-    if archetype["id"] in {"frontiere", "cour_des_cendres", "terres_riches"} and len(frontier) != 4:
+    if len(frontier) != 4:
         raise ValueError("nombre de lieux frontaliers invalide")
-    if archetype["id"] == "archipel" and not 4 <= len(frontier) <= 6:
-        raise ValueError("frontières de l'archipel invalides")
     for place in world["locations"]:
         if not 1 <= len(place["resources"]) <= 3 or len(place["resources"]) != len(set(place["resources"])):
             raise ValueError("ressources invalides")

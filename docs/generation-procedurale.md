@@ -2,7 +2,7 @@
 
 `outils/generation_monde.py` applique le contrat du GDD en trois flux pseudo-aléatoires indépendants, dérivés de la seed : `squelette`, `politique` et `secret`. Une modification d'une couche ne consomme donc pas les tirages des autres. La version du générateur fait partie de la dérivation.
 
-Le squelette est un graphe non orienté connexe, borné en degré et en poids. Les nations occupent des blocs contigus ; les archétypes à trois nations ont ainsi exactement quatre lieux frontaliers. Les cinq archétypes fixent leurs cardinalités et distributions propres. La correction BON-18 prévaut : « Terres riches » possède dix lieux ayant chacun une à trois ressources, soit dix à trente instances.
+Le squelette est un graphe non orienté connexe, borné en degré et en poids. Les nations occupent des blocs contigus. Chaque archétype possède exactement trois nations et quatre lieux frontaliers. Les cinq archétypes fixent leurs autres cardinalités et distributions propres. La correction BON-18 prévaut : « Terres riches » possède dix lieux ayant chacun une à trois ressources, soit dix à trente instances.
 
 Le tissu politique conserve les scores bruts dans `monde_testeur` et ne publie que leur projection qualitative. Les relations sont stockées une fois par paire non orientée : alliance et guerre déclarée sont exclusives, avec les bornes de tension du GDD.
 

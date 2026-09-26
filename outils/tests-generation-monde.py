@@ -39,10 +39,25 @@ class WorldGenerationTests(unittest.TestCase):
             if len(worlds) == 5:
                 break
         self.assertEqual(set(worlds), {item["id"] for item in GEN.ARCHETYPES})
+        for world in worlds.values():
+            self.assertEqual(len(world["nations"]), 3)
+            nation_by_place = {place["id"]: place["nation"] for place in world["locations"]}
+            frontier = {
+                node
+                for edge in world["edges"]
+                for node in (edge["a"], edge["b"])
+                if nation_by_place[edge["a"]] != nation_by_place[edge["b"]]
+            }
+            self.assertEqual(len(frontier), 4)
         rich = worlds["terres_riches"]
         self.assertEqual(len(rich["locations"]), 10)
         self.assertTrue(all(1 <= len(place["resources"]) <= 3 for place in rich["locations"]))
         self.assertTrue(10 <= sum(len(place["resources"]) for place in rich["locations"]) <= 30)
+
+    def test_rich_world_seed_twenty_is_valid_and_playable(self):
+        world = GEN.generate_world(20, 19)
+        self.assertEqual(world["archetype"], "terres_riches")
+        GEN.validate_world(world)
 
     def test_player_projection_omits_every_secret(self):
         world = GEN.generate_world(19, 19)
