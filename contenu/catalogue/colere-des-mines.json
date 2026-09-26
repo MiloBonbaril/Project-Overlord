@@ -1,0 +1,9 @@
+{
+  "id": "colere-des-mines", "nom": "La colère des mines",
+  "roles": {"lieu": "localite", "nation": "nation"},
+  "conditions": [{"chemin": "lieu.dans_le_domaine", "operateur": "==", "valeur": true}, {"chemin": "lieu.population", "operateur": "<=", "valeur": "ville"}],
+  "options": [
+    {"id": "securiser", "nom": "Sécuriser les galeries", "etiquettes": ["conformite", "demonstration"], "effets": [{"cible": "lieu.securite", "sens": "hausse", "ampleur": "notable"}], "prose": "Les galeries sont sécurisées et la production reprend."},
+    {"id": "negocier", "nom": "Négocier avec les mineurs", "etiquettes": ["ruse", "generosite"], "effets": [{"cible": "lieu.loyaute_envers_nation", "sens": "hausse", "ampleur": "legere"}], "prose": "Un accord apaise les mineurs, mais la reprise reste incertaine."}
+  ]
+}

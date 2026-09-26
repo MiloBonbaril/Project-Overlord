@@ -1,0 +1,9 @@
+{
+  "id": "porte-du-col", "nom": "La porte du col",
+  "roles": {"lieu": "localite", "nation": "nation"},
+  "conditions": [{"chemin": "lieu.frontaliere", "operateur": "==", "valeur": true}, {"chemin": "nation.en_guerre", "operateur": "==", "valeur": true}],
+  "options": [
+    {"id": "fortifier", "nom": "Fortifier la porte", "etiquettes": ["demonstration", "risque"], "effets": [{"cible": "lieu.securite", "sens": "hausse", "ampleur": "grande"}], "prose": "La porte est fortifiée et la frontière tient."},
+    {"id": "ouvrir", "nom": "Ouvrir un passage discret", "etiquettes": ["discretion", "ruse"], "effets": [{"cible": "nation.opinion_envers_joueur", "sens": "hausse", "ampleur": "notable"}], "prose": "Un passage discret est ouvert, sans attirer l'armée ennemie."}
+  ]
+}

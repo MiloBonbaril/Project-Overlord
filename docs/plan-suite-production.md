@@ -13,6 +13,10 @@ Objectif : obtenir une base reproductible avant d'écrire davantage de contenu.
 - Conserver le catalogue canonique comme test de non-régression.
 - Documenter la version de Python et la commande de test utilisée en CI.
 
+Validation retenue : Python 3.10+ et `python3 outils/teste-suite.py`. Cette
+commande unique couvre les réglages, les figures et les 16 tests du catalogue,
+dont le passage obligatoire de `contenu/catalogue/exemple-canonique.json`.
+
 Sortie attendue : une validation locale et CI qui échoue clairement lorsqu'un contrat de données est cassé.
 
 ## Tranche 2 — vertical slice jouable

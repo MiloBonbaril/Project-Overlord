@@ -1,0 +1,9 @@
+{
+  "id": "serment-des-cendres", "nom": "Le serment des cendres",
+  "roles": {"faction": "faction", "nation": "nation"},
+  "conditions": [{"chemin": "faction.nature", "operateur": "==", "valeur": "ordre-religieux"}, {"chemin": "nation.succession", "operateur": "==", "valeur": "contestee"}],
+  "options": [
+    {"id": "reconnaitre", "nom": "Reconnaître le serment", "etiquettes": ["conformite", "generosite"], "effets": [{"cible": "faction.opinion_envers_joueur", "sens": "hausse", "ampleur": "notable"}], "prose": "Le serment est reconnu et l'ordre vous doit une faveur."},
+    {"id": "briser", "nom": "Briser le serment", "etiquettes": ["violence", "terreur"], "effets": [{"cible": "faction.ferveur", "sens": "baisse", "ampleur": "majeure"}], "prose": "Le serment est brisé et les cendres deviennent un avertissement durable."}
+  ]
+}

@@ -106,7 +106,10 @@ def main():
             donnees = json.loads(chemin.read_text(encoding="utf-8"))
             mutation(donnees)
             chemin.write_text(json.dumps(donnees, ensure_ascii=False, indent=2), encoding="utf-8")
-            code, sortie = lance(outil, tmp)
+            # La validation de production garde 40 000 tirages. Les mutations
+            # de ce test ciblent des erreurs franches ; 2 000 tirages suffisent
+            # et évitent de payer 21 simulations complètes à chaque CI.
+            code, sortie = lance(outil, tmp, rapide=True)
             ok = attendu in sortie and code == 1
             print(f"{'ok   ' if ok else 'ÉCHEC'} {regle} {nom}")
             if not ok:
@@ -121,8 +124,11 @@ def main():
     return 0
 
 
-def lance(outil, cible):
-    r = subprocess.run([sys.executable, str(outil), str(cible)], capture_output=True, text=True)
+def lance(outil, cible, rapide=False):
+    commande = [sys.executable, str(outil), str(cible)]
+    if rapide:
+        commande += ["--tirages", "2000"]
+    r = subprocess.run(commande, capture_output=True, text=True)
     return r.returncode, r.stdout + r.stderr
 
 

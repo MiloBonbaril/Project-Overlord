@@ -408,6 +408,15 @@ def verifie_bruit(etiq, bruit):
 
 def main():
     racine = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
+    if "--tirages" in sys.argv:
+        try:
+            global TIRAGES
+            TIRAGES = int(sys.argv[sys.argv.index("--tirages") + 1])
+            if TIRAGES < 1:
+                raise ValueError
+        except (IndexError, ValueError):
+            print("--tirages doit être un entier positif")
+            return 2
     try:
         etiq, amp, bruit, monde = charge(racine)
     except (OSError, json.JSONDecodeError) as exc:

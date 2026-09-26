@@ -1,0 +1,9 @@
+{
+  "id": "visage-de-la-frontiere", "nom": "Le visage de la frontière",
+  "roles": {"notable": "notable", "lieu": "localite"},
+  "conditions": [{"chemin": "notable.charge", "operateur": "==", "valeur": "garnison"}, {"chemin": "lieu.securite", "operateur": "<=", "valeur": "moyen"}],
+  "options": [
+    {"id": "nommer", "nom": "Nommer un responsable", "etiquettes": ["conformite", "demonstration"], "effets": [{"cible": "notable.influence", "sens": "hausse", "ampleur": "notable"}], "prose": "Un responsable est nommé et la garnison sait à qui obéir."},
+    {"id": "observer", "nom": "Observer avant d'agir", "etiquettes": ["patience", "discretion"], "effets": [{"cible": "lieu.securite", "sens": "baisse", "ampleur": "infime"}], "prose": "L'attente révèle une faiblesse, mais la frontière reste exposée."}
+  ]
+}

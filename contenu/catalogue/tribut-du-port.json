@@ -1,0 +1,9 @@
+{
+  "id": "tribut-du-port", "nom": "Le tribut du port",
+  "roles": {"lieu": "localite", "nation": "nation"},
+  "conditions": [{"chemin": "lieu.richesse", "operateur": ">=", "valeur": "moyen"}, {"chemin": "nation.regime", "operateur": "==", "valeur": "monarchie"}],
+  "options": [
+    {"id": "prelever", "nom": "Prélever le tribut", "etiquettes": ["conformite", "risque"], "effets": [{"cible": "lieu.richesse", "sens": "baisse", "ampleur": "notable"}], "prose": "Le tribut est prélevé et les réserves du port diminuent."},
+    {"id": "remettre", "nom": "Remettre le tribut", "etiquettes": ["generosite", "patience"], "effets": [{"cible": "nation.opinion_envers_joueur", "sens": "hausse", "ampleur": "legere"}], "prose": "Le tribut est remis et la cour se montre reconnaissante."}
+  ]
+}

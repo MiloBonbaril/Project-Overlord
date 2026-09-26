@@ -1,0 +1,9 @@
+{
+  "id": "messe-sans-temoin", "nom": "La messe sans témoin",
+  "roles": {"lieu": "localite", "faction": "faction"},
+  "conditions": [{"chemin": "lieu.anomalie_observable", "operateur": "==", "valeur": true}, {"chemin": "faction.nature", "operateur": "==", "valeur": "culte"}],
+  "options": [
+    {"id": "interdire", "nom": "Interdire la messe", "etiquettes": ["terreur", "conformite"], "interdit_par": ["terreur"], "effets": [{"cible": "faction.ferveur", "sens": "baisse", "ampleur": "grande"}], "prose": "La cérémonie est interdite et le culte perd de sa ferveur."},
+    {"id": "tolerer", "nom": "Tolérer la cérémonie", "etiquettes": ["patience", "generosite"], "effets": [{"cible": "lieu.opinion_envers_joueur", "sens": "hausse", "ampleur": "notable"}], "prose": "La cérémonie a lieu sans incident et le quartier vous est favorable."}
+  ]
+}

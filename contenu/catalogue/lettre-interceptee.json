@@ -1,0 +1,9 @@
+{
+  "id": "lettre-interceptee", "nom": "La lettre interceptée",
+  "roles": {"notable": "notable", "nation": "nation"},
+  "conditions": [{"chemin": "notable.endette", "operateur": "==", "valeur": true}, {"chemin": "notable.ambitieux", "operateur": "==", "valeur": true}],
+  "options": [
+    {"id": "publier", "nom": "Publier la lettre", "etiquettes": ["demonstration", "risque"], "effets": [{"cible": "notable.opinion_envers_joueur", "sens": "baisse", "ampleur": "grande"}], "prose": "La lettre est rendue publique et le notable perd la face."},
+    {"id": "detourner", "nom": "Détourner la lettre", "etiquettes": ["discretion", "ruse"], "effets": [{"cible": "notable.influence", "sens": "baisse", "ampleur": "notable"}], "prose": "La lettre disparaît dans les archives et son auteur reste influent."}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "rumeur-du-marche", "nom": "La rumeur du marché",
+  "roles": {"lieu": "localite", "notable": "notable"},
+  "conditions": [{"chemin": "lieu.population", "operateur": "==", "valeur": "bourg"}, {"chemin": "notable.charge", "operateur": "==", "valeur": "negoce"}],
+  "options": [
+    {"id": "acheter", "nom": "Acheter les voix du marché", "etiquettes": ["generosite", "demonstration"], "effets": [{"cible": "lieu.richesse", "sens": "baisse", "ampleur": "legere"}], "prose": "Les voix du marché vous soutiennent après un don prudent."},
+    {"id": "espionner", "nom": "Écouter les marchands", "etiquettes": ["discretion", "improvisation"], "effets": [{"cible": "notable.opinion_envers_joueur", "sens": "baisse", "ampleur": "infime"}], "prose": "Les marchands ne sauront pas qui les a écoutés."}
+  ]
+}
