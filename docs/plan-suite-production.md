@@ -57,6 +57,31 @@ Le socle est désormais suffisamment vérifié pour ne plus élargir le concept 
 
 La prochaine étape est la **Tranche 3 — première session de test**. Elle doit mesurer la compréhension des ordres, le brouillard d'information, la lisibilité des rapports, les surprises perçues et l'envie de relancer. Toute modification de réglage ou de règle doit être motivée par ces observations. La génération procédurale complète et l'intégration Godot restent en attente de cette preuve d'intérêt.
 
+## Point de décision — après la Tranche 4
+
+Les Tranches 3 et 4 sont maintenant terminées : la boucle a été retestée après
+corrections, puis la génération procédurale a été implémentée, vérifiée sur
+plusieurs seeds et revalidée. Le Game Design reste gelé tant qu'un test
+d'interface ne révèle pas un problème concret.
+
+### Tranche 5 — première interface jouable Godot
+
+Objectif : transformer le moteur validé en expérience jouable, sans ajouter de
+mécanique.
+
+- connecter le moteur déterministe et la seed à une scène Godot minimale ;
+- afficher les conseils, les ordres disponibles, la résolution et les rapports ;
+- rendre le brouillard explicite sans révéler les informations interdites ;
+- permettre de relancer une partie et de reproduire une seed ;
+- tester la lisibilité sur quelques parties générées et consigner les frictions.
+
+Critère de sortie : un joueur peut lancer, comprendre et terminer une partie
+sans consulter les fichiers de données. Toute nouvelle règle ou modification
+de réglage doit rester reportée dans une décision de Game Design dédiée.
+
+Après cette tranche, la priorité sera un test utilisateur de l'interface,
+avant d'élargir le catalogue ou de produire davantage de contenu.
+
 ## Décisions à préserver
 
 - Le monde sans pair reste un réglage de test, autour d'une partie sur six ou sept, et non une promesse immuable.
