@@ -59,22 +59,31 @@ def make_world() -> dict[str, dict[str, Any]]:
     }
 
 
-def report(figure: dict[str, Any], option: dict[str, Any], rng: random.Random) -> str:
+def report(figure: dict[str, Any], option: dict[str, Any], rng: random.Random) -> tuple[str, bool]:
     franchise = figure["traits"]["franchise"]
     lines = [f"{figure['nom']} conseille : {option['nom']}. ", option["prose"]]
-    if franchise < 40 and rng.random() > franchise / 100:
+    omitted = franchise < 40 and rng.random() > franchise / 100
+    if omitted:
         lines.append("Une part du rapport reste soigneusement tue.")
     else:
         lines.append("Le rapport ne signale aucune réserve supplémentaire.")
-    return " ".join(lines)
+    return " ".join(lines), omitted
 
 
-def play(seed: int, turns: int, chosen: list[str] | None = None, clauses: set[str] | None = None) -> dict[str, Any]:
+def play(seed: int, turns: int, chosen: list[str] | None = None,
+         clauses: set[str] | None = None, pool: list[str] | None = None,
+         turn_clauses: list[set[str]] | None = None) -> dict[str, Any]:
     rng = random.Random(seed)
     settings = load(ROOT / "contenu/reglages/ampleurs.json")
     labels = load(ROOT / "contenu/reglages/etiquettes.json")
     noise = load(ROOT / "contenu/reglages/bruit.json")
     figures = [load(path) for path in sorted((ROOT / "contenu/figures").glob("*.json"))]
+    known_figures = {figure["id"] for figure in figures}
+    if pool:
+        unknown = set(pool) - known_figures
+        if unknown:
+            raise ValueError(f"figure(s) inconnue(s) : {', '.join(sorted(unknown))}")
+        figures = [figure for figure in figures if figure["id"] in set(pool)]
     for figure in figures:
         figure["traits"] = traits_for(figure, rng)
     situations = [load(path) for path in sorted((ROOT / "contenu/catalogue").glob("*.json")) if path.name != "exemple-canonique.json"]
@@ -95,8 +104,20 @@ def play(seed: int, turns: int, chosen: list[str] | None = None, clauses: set[st
             elif field in {"population", "securite", "richesse"}:
                 world.setdefault(role, {})[field] = "bourg" if field == "population" else "moyen"
         options = situation["options"]
-        auto, scores = choose(options, figure, labels, noise, rng, clauses or set())
-        option = next((item for item in options if chosen and item["id"] == chosen[turn - 1]), auto) if chosen and turn <= len(chosen) else auto
+        active_clauses = set(clauses or set())
+        if turn_clauses and turn <= len(turn_clauses):
+            active_clauses.update(turn_clauses[turn - 1])
+        auto, scores = choose(options, figure, labels, noise, rng, active_clauses)
+        if chosen and turn <= len(chosen):
+            option = next((item for item in options if item["id"] == chosen[turn - 1]), None)
+            if option is None:
+                available = ", ".join(item["id"] for item in options)
+                raise ValueError(f"choix '{chosen[turn - 1]}' invalide au tour {turn} (attendus : {available})")
+            forbidden_by = active_clauses & set(option.get("interdit_par", []))
+            if forbidden_by:
+                raise ValueError(f"choix '{option['id']}' interdit au tour {turn} par : {', '.join(sorted(forbidden_by))}")
+        else:
+            option = auto
         before = json.loads(json.dumps(world, ensure_ascii=False))
         facts = []
         for effect in option["effets"]:
@@ -105,8 +126,32 @@ def play(seed: int, turns: int, chosen: list[str] | None = None, clauses: set[st
             if isinstance(old, str) and old in LEVELS:
                 world[role][field] = level_change(old, effect["sens"], effect["ampleur"], settings)
             facts.append(f"{effect['cible']} : {old} → {world[role][field]}")
-        log.append({"tour": turn, "situation": situation["id"], "serviteur": figure["id"], "conseil": [{"id": o["id"], "score": round(scores[o["id"]], 2)} for o in options], "action": option["id"], "faits": facts, "rapport": report(figure, option, rng), "etat_avant": before, "etat_apres": world})
-    return {"seed": seed, "tours": len(log), "figures_du_vivier": sorted(figure["id"] for figure in figures), "journal": log, "etat_final": world}
+        text, omitted = report(figure, option, rng)
+        common = {"tour": turn, "situation": situation["id"], "serviteur": figure["id"], "conseil": [{"id": o["id"], "score": round(scores[o["id"]], 2)} for o in options], "clauses": sorted(active_clauses), "action": option["id"], "rapport": text}
+        player_entry = {**common, "faits": [] if omitted else facts}
+        tester_entry = {**common, "faits": facts, "fait_omis": omitted, "etat_avant": before, "etat_apres": json.loads(json.dumps(world, ensure_ascii=False))}
+        log.append((player_entry, tester_entry))
+    return {"seed": seed, "tours": len(log), "figures_du_vivier": sorted(figure["id"] for figure in figures), "journal": [item[0] for item in log], "journal_testeur": [item[1] for item in log], "etat_final": world}
+
+
+def interactive_choices(seed: int, turns: int, pool: list[str] | None) -> tuple[list[str], list[set[str]]]:
+    """Collecte les ordres avec un aperçu déterministe des situations."""
+    preview = play(seed, turns, pool=pool)
+    choices: list[str] = []
+    clauses: list[set[str]] = []
+    for item in preview["journal"]:
+        option_ids = [option["id"] for option in item["conseil"]]
+        print(f"\nTour {item['tour']} · {item['situation']} · conseil de {item['serviteur']}")
+        print("  " + ", ".join(f"{option['id']} ({option['score']})" for option in item["conseil"]))
+        while True:
+            value = input(f"  Option [{'/'.join(option_ids)}] : ").strip()
+            if value in option_ids:
+                choices.append(value)
+                break
+            print("  Option inconnue.")
+        raw_clauses = input("  Clause(s), séparées par des virgules (entrée = aucune) : ")
+        clauses.append({value.strip() for value in raw_clauses.split(",") if value.strip()})
+    return choices, clauses
 
 
 def main() -> int:
@@ -114,9 +159,20 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=20260926)
     parser.add_argument("--tours", type=int, default=8)
     parser.add_argument("--clause", action="append", default=[], help="étiquette interdite par l'ordre (répétable)")
+    parser.add_argument("--choix", action="append", default=[], help="option choisie au prochain tour (répétable)")
+    parser.add_argument("--clause-tour", action="append", default=[], help="clauses du prochain tour, séparées par des virgules (répétable)")
+    parser.add_argument("--composition", help="identifiants des figures autorisées, séparés par des virgules")
     parser.add_argument("--json", action="store_true", help="émet le journal machine lisible")
     args = parser.parse_args()
-    result = play(args.seed, args.tours, clauses=set(args.clause))
+    pool = [value.strip() for value in args.composition.split(",") if value.strip()] if args.composition else None
+    turn_clauses = [{value.strip() for value in raw.split(",") if value.strip()} for raw in args.clause_tour]
+    choices = args.choix
+    if not args.json and not choices:
+        choices, turn_clauses = interactive_choices(args.seed, args.tours, pool)
+    try:
+        result = play(args.seed, args.tours, choices, set(args.clause), pool, turn_clauses)
+    except ValueError as error:
+        parser.error(str(error))
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
     else:
@@ -124,7 +180,9 @@ def main() -> int:
         for item in result["journal"]:
             print(f"\nTour {item['tour']} · {item['situation']} · conseil de {item['serviteur']}")
             print("  " + ", ".join(f"{c['id']} ({c['score']})" for c in item["conseil"]))
-            print(f"  Action : {item['action']}\n  {item['rapport']}\n  Faits : {'; '.join(item['faits'])}")
+            facts = "; ".join(item["faits"]) if item["faits"] else "non établis dans le rapport"
+            print(f"  Clause(s) : {', '.join(item['clauses']) or 'aucune'}")
+            print(f"  Action : {item['action']}\n  {item['rapport']}\n  Faits : {facts}")
         print("\nPartie terminée.")
     return 0
 

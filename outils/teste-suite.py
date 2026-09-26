@@ -12,6 +12,7 @@ def main():
         [sys.executable, str(racine / "outils/tests-verifie-reglages.py"), str(racine)],
         [sys.executable, str(racine / "outils/tests-verifie-figures.py"), str(racine)],
         [sys.executable, str(racine / "outils/tests-verifie-catalogue.py")],
+        [sys.executable, str(racine / "outils/tests-joue-partie.py")],
     ]
     for commande in commandes:
         resultat = subprocess.run(commande, cwd=racine)
