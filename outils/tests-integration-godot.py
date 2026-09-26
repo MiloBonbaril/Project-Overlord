@@ -32,6 +32,13 @@ class GodotIntegrationTest(unittest.TestCase):
         self.assertIn('INTERDITE PAR LA CLAUSE', scene)
         self.assertIn('func resolve_selected_order()', scene)
 
+    def test_scene_exposes_composition_and_default_seed(self) -> None:
+        scene = (ROOT / "godot/Main.gd").read_text(encoding="utf-8")
+        self.assertIn('"value": "yldra,corvin"', scene)
+        self.assertIn('"value": "orine,tessia"', scene)
+        self.assertIn('"--composition", composition', scene)
+        self.assertIn('return DEFAULT_SEED', scene)
+
 
 if __name__ == "__main__":
     unittest.main()

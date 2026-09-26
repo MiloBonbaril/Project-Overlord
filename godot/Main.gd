@@ -3,8 +3,13 @@ extends Control
 const TURN_COUNT := 8
 const DEFAULT_SEED := 20260926
 const ENGINE_PATH := "res://outils/joue-partie.py"
+const COMPOSITIONS := [
+	{"label": "Yldra et Corvin", "value": "yldra,corvin"},
+	{"label": "Orine et Tessia", "value": "orine,tessia"},
+]
 
 var seed_input: LineEdit
+var composition_input: OptionButton
 var status_label: Label
 var heading: Label
 var advice: RichTextLabel
@@ -26,7 +31,7 @@ var resolution_pending := false
 func _ready() -> void:
 	build_ui()
 	load_catalogue()
-	start_game()
+	show_launch_screen()
 
 
 func build_ui() -> void:
@@ -57,14 +62,31 @@ func build_ui() -> void:
 	seed_input.text = str(DEFAULT_SEED)
 	seed_input.custom_minimum_size.x = 180
 	launch.add_child(seed_input)
+
+	var composition_row := HBoxContainer.new()
+	composition_row.add_theme_constant_override("separation", 8)
+	page.add_child(composition_row)
+	var composition_label := Label.new()
+	composition_label.text = "Composition du vivier"
+	composition_row.add_child(composition_label)
+	composition_input = OptionButton.new()
+	composition_input.custom_minimum_size.x = 240
+	for composition in COMPOSITIONS:
+		composition_input.add_item(composition["label"])
+		composition_input.set_item_metadata(composition_input.item_count - 1, composition["value"])
+	composition_row.add_child(composition_input)
+
+	var launch_actions := HBoxContainer.new()
+	launch_actions.add_theme_constant_override("separation", 8)
+	page.add_child(launch_actions)
 	var launch_button := Button.new()
 	launch_button.text = "Lancer"
 	launch_button.pressed.connect(start_game)
-	launch.add_child(launch_button)
+	launch_actions.add_child(launch_button)
 	restart_button = Button.new()
 	restart_button.text = "Rejouer la même seed"
 	restart_button.pressed.connect(start_game)
-	launch.add_child(restart_button)
+	launch_actions.add_child(restart_button)
 
 	status_label = Label.new()
 	status_label.modulate = Color("b7becb")
@@ -123,7 +145,7 @@ func load_catalogue() -> void:
 
 
 func start_game() -> void:
-	var parsed_seed := seed_input.text.strip_edges().to_int()
+	var parsed_seed := normalized_seed()
 	seed_input.text = str(parsed_seed)
 	choices.clear()
 	clauses_by_turn.clear()
@@ -140,7 +162,8 @@ func start_game() -> void:
 
 
 func run_engine(seed_value: int) -> Dictionary:
-	var args := PackedStringArray([ProjectSettings.globalize_path(ENGINE_PATH), "--seed", str(seed_value), "--tours", str(TURN_COUNT), "--json"])
+	var composition := str(composition_input.get_selected_metadata())
+	var args := PackedStringArray([ProjectSettings.globalize_path(ENGINE_PATH), "--seed", str(seed_value), "--composition", composition, "--tours", str(TURN_COUNT), "--json"])
 	for choice in choices:
 		args.append_array(["--choix", choice])
 	for turn_clauses in clauses_by_turn:
@@ -249,6 +272,22 @@ func show_end() -> void:
 	clause_input.editable = false
 	resolve_button.visible = false
 	next_button.visible = false
+
+
+func show_launch_screen() -> void:
+	status_label.text = "Choisissez une seed et une composition, puis lancez la partie."
+	heading.text = "Nouvelle partie"
+	advice.text = "Deux compositions du vivier sont disponibles. Le choix est conservé lorsque vous rejouez la même seed."
+	clause_input.editable = false
+	resolve_button.visible = false
+	next_button.visible = false
+
+
+func normalized_seed() -> int:
+	var value := seed_input.text.strip_edges()
+	if value.is_empty() or not value.is_valid_int():
+		return DEFAULT_SEED
+	return value.to_int()
 
 
 func find_option(situation: Dictionary, option_id: String) -> Dictionary:
