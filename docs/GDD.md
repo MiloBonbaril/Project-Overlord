@@ -1,6 +1,6 @@
 # Game Design Document — Project Overlord
 
-**Révision :** 7  
+**Révision :** 8
 **Statut :** concept stabilisé, prêt pour la production du vertical slice  
 **Langue de référence :** français
 
@@ -74,6 +74,20 @@ La géographie sert principalement de graphe de distances : l'écran principal e
 
 Le nombre de pairs est variable et peut être nul. Les noms, les lieux et les situations portent le ton écrit à la main ; la génération porte l'incertitude structurelle qui rend ce ton rejouable.
 
+### 7.1 Invariants de génération
+
+Les valeurs suivantes sont le contrat d'implémentation de la Tranche 4. Elles lèvent les ambiguïtés de l'ancienne formulation sans ajouter de mécanique.
+
+| Invariant | Valeur retenue | Règle opérationnelle |
+|---|---:|---|
+| Nations | 3 | Les trois nations sont non vides et le graphe des localités est connexe. |
+| Lieux frontaliers | 4 | Un lieu est frontalier s'il est adjacent à une localité d'une autre nation. La génération utilise des blocs simples ; elle produit donc 4 lieux frontaliers exactement, avec au moins une connexion entre chaque paire de nations nécessaire à la connexité. |
+| Lieux de l'archétype « Terres riches » | 10 | Chaque lieu reçoit entre 1 et 3 instances de ressource inclusivement. |
+| Ressources de « Terres riches » | 10 à 30 | Le total est la somme des instances par lieu ; la borne basse est imposée par les 10 lieux et la borne haute par 3 ressources sur chacun. Il n'existe pas de lieu sans ressource dans cet archétype. |
+| Quota sans pair | 3 mondes sur 20 | `index_de_monde = 0` pour le premier monde de la session, puis incrément de 1 à chaque monde généré. Le monde est sans pair si `index_de_monde mod 20 ∈ {0, 1, 2}`. La seed de session initialise le générateur, mais ne détermine pas le quota. |
+
+Le choix de 4 lieux frontaliers conserve l'hypothèse de blocs simples : deux lieux ne peuvent pas relier trois blocs non vides tout en donnant à chaque nation une frontière conforme à la définition ci-dessus. Le quota est évalué sur l'index de génération, jamais sur `floor(seed_de_session / 20)` ; sur toute fenêtre alignée de 20 mondes, exactement 3 sont donc sans pair, soit 15 %.
+
 ## 8. Première tranche de production
 
 La première tranche ne teste pas encore la rejouabilité. Elle teste si une partie unique est intéressante :
@@ -95,4 +109,3 @@ La génération procédurale complète vient après cette preuve de plaisir. Son
 - [Figures](../contenu/figures/)
 - [Réglages normatifs](../contenu/reglages/)
 - [Catalogue de situations](../contenu/catalogue/)
-
