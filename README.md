@@ -48,6 +48,9 @@ godot4 --editor project.godot
 godot4 --path .
 ```
 
+Si Godot est installé localement dans le dépôt, utilisez
+`./godot/godot4 --path .` (version validée : 4.7.2).
+
 Saisissez une seed puis utilisez **Lancer**. Chaque tour affiche le conseil et
 les ordres, accepte les clauses séparées par des virgules, puis présente la
 résolution, les faits autorisés et le rapport. **Rejouer la même seed** remet la
