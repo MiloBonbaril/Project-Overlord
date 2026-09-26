@@ -12,6 +12,8 @@ import random
 from pathlib import Path
 from typing import Any
 
+from generation_monde import generate_world, player_world
+
 ROOT = Path(__file__).resolve().parents[1]
 TRAITS = ["zele", "cruaute", "initiative", "discretion", "franchise"]
 LEVELS = ["nul", "faible", "moyen", "fort", "total"]
@@ -92,7 +94,7 @@ def report(figure: dict[str, Any], option: dict[str, Any], rng: random.Random) -
 
 def play(seed: int, turns: int, chosen: list[str] | None = None,
          clauses: set[str] | None = None, pool: list[str] | None = None,
-         turn_clauses: list[set[str]] | None = None) -> dict[str, Any]:
+         turn_clauses: list[set[str]] | None = None, world_index: int = 0) -> dict[str, Any]:
     rng = random.Random(seed)
     settings = load(ROOT / "contenu/reglages/ampleurs.json")
     labels = load(ROOT / "contenu/reglages/etiquettes.json")
@@ -110,6 +112,7 @@ def play(seed: int, turns: int, chosen: list[str] | None = None,
     situations = [load(path) for path in sorted((ROOT / "contenu/catalogue").glob("*.json")) if path.name != "exemple-canonique.json"]
     rng.shuffle(situations)
     rng.shuffle(figures)
+    generated_world = generate_world(seed, world_index)
     world = make_world()
     log: list[dict[str, Any]] = []
     for turn, situation in enumerate(situations[:turns], 1):
@@ -159,7 +162,7 @@ def play(seed: int, turns: int, chosen: list[str] | None = None,
         player_entry = {**common, "resolution_probable": resolution_label, "faits": [] if omitted else facts}
         tester_entry = {**common, "resolution_probable": resolution_label, "faits": facts, "fait_omis": omitted, "score_max": score_max, "score_choisi": chosen_score, "ecart": gap, "etat_resolution": resolution_state, "ampleurs": magnitudes, "etat_avant": before, "etat_apres": json.loads(json.dumps(world, ensure_ascii=False))}
         log.append((player_entry, tester_entry))
-    return {"seed": seed, "tours": len(log), "figures_du_vivier": sorted(figure["id"] for figure in figures), "journal": [item[0] for item in log], "journal_testeur": [item[1] for item in log], "etat_final": world}
+    return {"seed": seed, "tours": len(log), "figures_du_vivier": sorted(figure["id"] for figure in figures), "monde": player_world(generated_world), "journal": [item[0] for item in log], "journal_testeur": [item[1] for item in log], "monde_testeur": generated_world, "etat_final": world}
 
 
 def interactive_choices(seed: int, turns: int, pool: list[str] | None) -> tuple[list[str], list[set[str]]]:
@@ -185,6 +188,7 @@ def interactive_choices(seed: int, turns: int, pool: list[str] | None) -> tuple[
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seed", type=int, default=20260926)
+    parser.add_argument("--index-monde", type=int, default=0, help="index de génération dans la session (quota sans pair)")
     parser.add_argument("--tours", type=int, default=8)
     parser.add_argument("--clause", action="append", default=[], help="étiquette interdite par l'ordre (répétable)")
     parser.add_argument("--choix", action="append", default=[], help="option choisie au prochain tour (répétable)")
@@ -198,7 +202,7 @@ def main() -> int:
     if not args.json and not choices:
         choices, turn_clauses = interactive_choices(args.seed, args.tours, pool)
     try:
-        result = play(args.seed, args.tours, choices, set(args.clause), pool, turn_clauses)
+        result = play(args.seed, args.tours, choices, set(args.clause), pool, turn_clauses, args.index_monde)
     except ValueError as error:
         parser.error(str(error))
     if args.json:
