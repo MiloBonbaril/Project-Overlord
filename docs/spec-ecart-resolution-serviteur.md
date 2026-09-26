@@ -1,6 +1,6 @@
 # Spec — écart de résolution du serviteur
 
-**Statut :** proposition de validation avant génération procédurale  
+**Statut :** validée par l'utilisateur le 26/09/2026 ; prête à être découpée pour implémentation
 **Source :** observation BON-13, partie jouable de la Tranche 3
 
 ## Intention
@@ -101,3 +101,10 @@ traits, ni au catalogue.
 Cette spec est une hypothèse de plaisir, pas une preuve : le verdict revient
 au playtest utilisateur. La génération procédurale reste en attente de ce
 test.
+
+## Décision de validation
+
+L'utilisateur valide l'hypothèse et les seuils `8/20`. La convention retenue
+est donc : `écart ≤ 8` = effet complet, `8 < écart ≤ 20` = réduction d'un
+palier, `écart > 20` = réduction de deux paliers. Milo doit découper
+l'implémentation de cette règle pour Kit avant le rejeu Vera.

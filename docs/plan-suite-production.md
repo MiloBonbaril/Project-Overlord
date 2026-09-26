@@ -47,6 +47,16 @@ Cette tranche vient après la preuve d'intérêt d'une partie unique. Elle impl�
 
 Créer une sous-tâche de production pour la Tranche 1 : **« Stabiliser la validation du socle et la commande de test unique »**. Une fois terminée, créer la sous-tâche du vertical slice. Il est inutile de lancer la génération procédurale ou d'écrire un grand catalogue avant ces deux preuves.
 
+## Point de décision — 26 septembre 2026
+
+Le socle est désormais suffisamment vérifié pour ne plus élargir le concept :
+
+- `python3 outils/teste-suite.py` passe ; réglages, figures et catalogue sont validés, avec les 16 tests de non-régression ;
+- `python3 outils/joue-partie.py --seed 20260926 --json` produit un journal déterministe de 8 tours ;
+- la boucle conseil → résolution → faits/rapport → conseil suivant est donc testable sur une partie complète.
+
+La prochaine étape est la **Tranche 3 — première session de test**. Elle doit mesurer la compréhension des ordres, le brouillard d'information, la lisibilité des rapports, les surprises perçues et l'envie de relancer. Toute modification de réglage ou de règle doit être motivée par ces observations. La génération procédurale complète et l'intégration Godot restent en attente de cette preuve d'intérêt.
+
 ## Décisions à préserver
 
 - Le monde sans pair reste un réglage de test, autour d'une partie sur six ou sept, et non une promesse immuable.
