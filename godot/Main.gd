@@ -10,6 +10,7 @@ var heading: Label
 var advice: RichTextLabel
 var clause_input: LineEdit
 var options_box: VBoxContainer
+var resolve_button: Button
 var report: RichTextLabel
 var next_button: Button
 var restart_button: Button
@@ -18,6 +19,8 @@ var catalogue: Dictionary = {}
 var choices: Array[String] = []
 var clauses_by_turn: Array[String] = []
 var current_turn := 0
+var selected_option_id := ""
+var resolution_pending := false
 
 
 func _ready() -> void:
@@ -83,11 +86,17 @@ func build_ui() -> void:
 	clause_input = LineEdit.new()
 	clause_input.placeholder_text = "aucune"
 	clause_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	clause_input.text_changed.connect(_on_clauses_changed)
 	clause_row.add_child(clause_input)
 
 	options_box = VBoxContainer.new()
 	options_box.add_theme_constant_override("separation", 6)
 	page.add_child(options_box)
+	resolve_button = Button.new()
+	resolve_button.text = "Résoudre"
+	resolve_button.disabled = true
+	resolve_button.pressed.connect(resolve_selected_order)
+	page.add_child(resolve_button)
 	report = RichTextLabel.new()
 	report.bbcode_enabled = true
 	report.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -119,6 +128,8 @@ func start_game() -> void:
 	choices.clear()
 	clauses_by_turn.clear()
 	current_turn = 0
+	selected_option_id = ""
+	resolution_pending = false
 	report.text = ""
 	var result := run_engine(parsed_seed)
 	if result.is_empty():
@@ -148,8 +159,12 @@ func run_engine(seed_value: int) -> Dictionary:
 
 func show_turn() -> void:
 	clear_options()
+	selected_option_id = ""
+	resolution_pending = false
 	clause_input.editable = true
 	clause_input.text = ""
+	resolve_button.visible = true
+	resolve_button.disabled = true
 	next_button.visible = false
 	var journal: Array = game.get("journal", [])
 	if current_turn >= journal.size():
@@ -159,28 +174,61 @@ func show_turn() -> void:
 	var situation: Dictionary = catalogue.get(entry.get("situation", ""), {})
 	heading.text = "Tour %d/%d · %s" % [current_turn + 1, journal.size(), situation.get("nom", entry.get("situation", "Situation"))]
 	advice.text = "[b]Conseil de %s[/b]\n%s\n\nChoisissez un ordre :" % [entry.get("serviteur", "?"), situation.get("description", "")]
+	build_options(situation, entry)
+
+
+func build_options(situation: Dictionary, entry: Dictionary) -> void:
+	clear_options()
+	var active_clauses := parse_clauses()
 	for scored in entry.get("conseil", []):
 		var option := find_option(situation, scored.get("id", ""))
+		var option_id: String = scored.get("id", "")
+		var forbidden_by := PackedStringArray()
+		for clause in option.get("interdit_par", []):
+			if active_clauses.has(str(clause)):
+				forbidden_by.append(str(clause))
 		var button := Button.new()
-		button.text = "%s — conseil %.2f\n%s" % [option.get("nom", scored.get("id", "?")), scored.get("score", 0.0), option.get("prose", "")]
+		var state_text := ""
+		if not forbidden_by.is_empty():
+			state_text = "\nINTERDITE PAR LA CLAUSE : %s" % joined(forbidden_by)
+		elif option_id == selected_option_id:
+			state_text = "\n✓ ORDRE SÉLECTIONNÉ"
+		button.text = "%s — conseil %.2f\n%s%s" % [option.get("nom", option_id), scored.get("score", 0.0), option.get("prose", ""), state_text]
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.pressed.connect(resolve_order.bind(scored.get("id", "")))
+		button.disabled = not forbidden_by.is_empty()
+		button.pressed.connect(select_order.bind(option_id))
 		options_box.add_child(button)
 
 
-func resolve_order(option_id: String) -> void:
-	choices.append(option_id)
+func select_order(option_id: String) -> void:
+	if resolution_pending:
+		return
+	selected_option_id = option_id
+	resolve_button.disabled = false
+	var entry: Dictionary = game["journal"][current_turn]
+	build_options(catalogue.get(entry.get("situation", ""), {}), entry)
+
+
+func resolve_selected_order() -> void:
+	if resolution_pending or selected_option_id.is_empty():
+		return
+	resolution_pending = true
+	resolve_button.disabled = true
+	choices.append(selected_option_id)
 	clauses_by_turn.append(clause_input.text.strip_edges())
 	var result := run_engine(seed_input.text.to_int())
 	if result.is_empty():
 		choices.pop_back()
 		clauses_by_turn.pop_back()
+		resolution_pending = false
+		resolve_button.disabled = false
 		return
 	game = result
 	var entry: Dictionary = game["journal"][current_turn]
 	clear_options()
 	clause_input.editable = false
+	resolve_button.visible = false
 	var facts: Array = entry.get("faits", [])
 	var facts_text := "Faits non établis dans le rapport." if facts.is_empty() else joined(facts, "\n")
 	report.text = "[b]Résolution : %s[/b]\n%s\n\n[b]Faits[/b]\n%s" % [entry.get("resolution_probable", ""), entry.get("rapport", ""), facts_text]
@@ -199,6 +247,7 @@ func show_end() -> void:
 	advice.text = "Le domaine a traversé %d conseils. Vous pouvez rejouer exactement cette partie ou saisir une autre seed." % game.get("tours", 0)
 	report.text = "[b]Journal final[/b]\nSeed %s · ordres : %s" % [seed_input.text, joined(choices)]
 	clause_input.editable = false
+	resolve_button.visible = false
 	next_button.visible = false
 
 
@@ -214,7 +263,25 @@ func clear_options() -> void:
 		child.queue_free()
 
 
-func joined(values: Array, separator := ", ") -> String:
+func parse_clauses() -> PackedStringArray:
+	var clauses := PackedStringArray()
+	for value in clause_input.text.split(","):
+		var clause := value.strip_edges()
+		if not clause.is_empty():
+			clauses.append(clause)
+	return clauses
+
+
+func _on_clauses_changed(_text: String) -> void:
+	if game.is_empty() or resolution_pending or current_turn >= game.get("journal", []).size():
+		return
+	selected_option_id = ""
+	resolve_button.disabled = true
+	var entry: Dictionary = game["journal"][current_turn]
+	build_options(catalogue.get(entry.get("situation", ""), {}), entry)
+
+
+func joined(values, separator := ", ") -> String:
 	var strings := PackedStringArray()
 	for value in values:
 		strings.append(str(value))
@@ -225,4 +292,3 @@ func show_error(message: String) -> void:
 	status_label.text = message
 	heading.text = "Impossible de lancer la partie"
 	advice.text = "Vérifiez la commande indiquée dans le README."
-	clear_options()

@@ -25,7 +25,13 @@ class GodotIntegrationTest(unittest.TestCase):
         self.assertIn('res://outils/joue-partie.py', scene)
         self.assertIn('OS.execute("python3"', scene)
 
+    def test_scene_requires_a_valid_selection_before_resolving(self) -> None:
+        scene = (ROOT / "godot/Main.gd").read_text(encoding="utf-8")
+        self.assertIn('resolve_button.disabled = true', scene)
+        self.assertIn('button.disabled = not forbidden_by.is_empty()', scene)
+        self.assertIn('INTERDITE PAR LA CLAUSE', scene)
+        self.assertIn('func resolve_selected_order()', scene)
+
 
 if __name__ == "__main__":
     unittest.main()
-
